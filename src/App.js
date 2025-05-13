@@ -31,10 +31,28 @@ export default function App() {
           tabBarInactiveTintColor: "gray",
         })}
       >
-        <Tab.Screen name="Home" component={Home} />
-        <Tab.Screen name="NewEvent" component={CreateEvent} />
+        <Tab.Screen
+          name="Home"
+          component={Home}
+          options={{ headerShown: false }}
+        />
+        <Tab.Screen
+          name="NewEvent"
+          component={CreateEvent}
+          options={{
+            title: "Crear Evento",
+            headerStyle: {
+              backgroundColor: "#f2f2f2",
+            },
+            headerTintColor: "#333", // color del texto y botones del header
+            headerTitleStyle: {
+              fontWeight: "bold",
+              fontSize: 20,
+            },
+            headerTitleAlign: "center",
+          }}
+        />
         <Tab.Screen name="Events" component={EventLine} />
-        
       </Tab.Navigator>
     </NavigationContainer>
   );
