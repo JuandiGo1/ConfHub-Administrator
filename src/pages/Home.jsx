@@ -3,13 +3,52 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { useState, useEffect } from "react";
 import styles from "../styles/styles";
+import { getEvents } from "../services/eventService";
 
 export default function Home() {
+  const [events, setEvents] = useState([]);
+  const [eventsActive, setEventsActive] = useState([]);
+  const [eventsEnded, setEventsEnded] = useState([]);
+  const [eventsToday, setEventsToday] = useState([]);
   const insets = useSafeAreaInsets();
 
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await getEvents();
+        const today = new Date();
+        setEvents(response);
+
+        setEventsActive(
+          response.filter((event) => event.status === "Por empezar")
+        );
+
+        setEventsEnded(
+          response.filter((event) => event.status === "Finalizado")
+        );
+
+        setEventsToday(
+          response.filter((event) => {
+            const eventDate = new Date(event.datetime); // Convertir datetime a Date
+            return (
+              eventDate.getDate() === today.getDate() &&
+              eventDate.getMonth() === today.getMonth() &&
+              eventDate.getFullYear() === today.getFullYear()
+            );
+          })
+        );
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
   return (
-    <SafeAreaProvider style={[styles.container,  { paddingTop: insets.top }]}>
+    <SafeAreaProvider style={[styles.container, { paddingTop: insets.top }]}>
       {/* Encabezado */}
       <View style={styles.header}>
         <View>
@@ -26,26 +65,26 @@ export default function Home() {
       <View style={styles.grid}>
         <View style={[styles.card, { backgroundColor: "#6EE7B7" }]}>
           <Text style={styles.cardTitle}>Eventos Activos</Text>
-          <Text style={styles.cardValue}>23</Text>
-          <Text style={styles.cardInfo}>↑ 3 More vs last 7 days</Text>
+          <Text style={styles.cardValue}>{eventsToday.length}</Text>
+          <Text style={styles.cardInfo}>↑ Eventos hoy</Text>
         </View>
 
         <View style={[styles.card, { backgroundColor: "#FCA5A5" }]}>
           <Text style={styles.cardTitle}>Finalizados</Text>
-          <Text style={styles.cardValue}>12</Text>
-          <Text style={styles.cardInfo}>↓ 1 Less vs last 7 days</Text>
+          <Text style={styles.cardValue}>{eventsEnded.length}</Text>
+          <Text style={styles.cardInfo}>↓ Eventos pasados</Text>
         </View>
 
         <View style={[styles.card, { backgroundColor: "#FDE68A" }]}>
           <Text style={styles.cardTitle}>Pendientes</Text>
-          <Text style={styles.cardValue}>35</Text>
-          <Text style={styles.cardInfo}>↑ 1 New vs last 7 days</Text>
+          <Text style={styles.cardValue}>{eventsActive.length}</Text>
+          <Text style={styles.cardInfo}>↑ 1 Eventos próximos</Text>
         </View>
 
         <View style={[styles.card, { backgroundColor: "#BFDBFE" }]}>
           <Text style={styles.cardTitle}>Total</Text>
-          <Text style={styles.cardValue}>None</Text>
-          <Text style={styles.cardInfo}>No new Meetings</Text>
+          <Text style={styles.cardValue}>{events.length}</Text>
+          <Text style={styles.cardInfo}>Eventos totales</Text>
         </View>
       </View>
     </SafeAreaProvider>
