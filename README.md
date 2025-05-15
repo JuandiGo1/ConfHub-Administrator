@@ -1,2 +1,2 @@
 # Confhub - Administracion
-App mobile para 
+App mobile para administrar eventos de la app ConfHub
