@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://10.0.2.2:3000/api/events";
+const API_BASE_URL = "http://localhost:3000/api/events";
 
 /**
  * Obtiene todos los eventos.
@@ -8,6 +8,7 @@ export async function getEvents() {
   try {
     const response = await fetch(API_BASE_URL);
     if (!response.ok) {
+      console.error("Error al obtener los eventos");
       throw new Error("Error al obtener los eventos");
     }
     return await response.json();

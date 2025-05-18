@@ -1,53 +1,66 @@
-import { StyleSheet} from 'react-native';
+import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 20,
   },
-   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
   },
   subtitle: {
-    color: '#999',
-    fontSize: 14
+    color: "#999",
+    fontSize: 14,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold'
+    fontWeight: "bold",
   },
   avatar: {
     width: 50,
     height: 50,
-    borderRadius: 25
+    borderRadius: 25,
   },
   grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  eventsGrid: {
+    flexDirection: "column",
+    width: "100%",
   },
   card: {
-    width: '48%',
+    width: "48%",
     borderRadius: 15,
     padding: 15,
-    marginBottom: 15
+    marginBottom: 15,
   },
   cardTitle: {
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: "bold",
   },
   cardValue: {
     fontSize: 28,
-    fontWeight: 'bold'
+    fontWeight: "bold",
   },
   cardInfo: {
     fontSize: 12,
-    color: '#444'
-  }
+    color: "#444",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 12,
+    fontSize: 15,
+    backgroundColor: "#fafafa",
+  },
 });
 
 export default styles;

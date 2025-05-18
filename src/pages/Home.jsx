@@ -1,4 +1,4 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, ScrollView } from "react-native";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -6,6 +6,7 @@ import {
 import { useState, useEffect } from "react";
 import styles from "../styles/styles";
 import { getEvents } from "../services/eventService";
+import EventCard from "../components/EventCard";
 
 export default function Home() {
   const [events, setEvents] = useState([]);
@@ -70,7 +71,7 @@ export default function Home() {
         </View>
 
         <View style={[styles.card, { backgroundColor: "#FCA5A5" }]}>
-          <Text style={styles.cardTitle}>Finalizados</Text>
+          <Text style={styles.cardTitle}>Finalizadoss</Text>
           <Text style={styles.cardValue}>{eventsEnded.length}</Text>
           <Text style={styles.cardInfo}>↓ Eventos pasados</Text>
         </View>
@@ -87,6 +88,19 @@ export default function Home() {
           <Text style={styles.cardInfo}>Eventos totales</Text>
         </View>
       </View>
+      
+      <ScrollView>
+        {/* Eventos */}
+        <View style={styles.eventsGrid}>
+          {events.map((event, index) => (
+            <EventCard
+              key={index}
+              event={event}
+              onPress={() => console.log("Evento presionado", event)}
+            />
+          ))}
+        </View>
+      </ScrollView>
     </SafeAreaProvider>
   );
 }
