@@ -1,59 +1,96 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import Home from "./pages/Home";
 import EventLine from "./pages/EventLine";
 import CreateEvent from "./pages/CreateEvent";
 import { Ionicons } from "@expo/vector-icons";
+import LoginScreen from "./pages/LoginScreen";
+import CreateAccountScreen from "./pages/CreateAccountScreen";
+import Toast from "react-native-toast-message";
+import AccountScreen from "./pages/AccountScreen";
 
+const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ color, size }) => {
-            let iconName = "home";
-            switch (route.name) {
-              case "Home":
-                iconName = "home";
-                break;
-              case "Events":
-                iconName = "calendar-outline";
-                break;
-              case "NewEvent":
-                iconName = "add-circle-outline";
-                break;
-            }
-            return <Ionicons name={iconName} size={size} color={color} />;
+    <>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name="Registrar"
+            component={CreateAccountScreen}
+            options={{ headerShown: true }}
+          />
+          <Stack.Screen
+            name="Main"
+            component={MainTabs}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Cuenta"
+            component={AccountScreen}
+            options={{ headerShown: true }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+      <Toast />
+    </>
+  );
+}
+
+function MainTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName = "home";
+          switch (route.name) {
+            case "Home":
+              iconName = "home";
+              break;
+            case "Events":
+              iconName = "calendar-outline";
+              break;
+            case "NewEvent":
+              iconName = "add-circle-outline";
+              break;
+          }
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: "blue",
+        tabBarInactiveTintColor: "gray",
+      })}
+    >
+      <Tab.Screen
+        name="Home"
+        component={Home}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="NewEvent"
+        component={CreateEvent}
+        options={{
+          title: "Crear Evento",
+          headerStyle: {
+            backgroundColor: "#f2f2f2",
           },
-          tabBarActiveTintColor: "blue",
-          tabBarInactiveTintColor: "gray",
-        })}
-      >
-        <Tab.Screen
-          name="Home"
-          component={Home}
-          options={{ headerShown: false }}
-        />
-        <Tab.Screen
-          name="NewEvent"
-          component={CreateEvent}
-          options={{
-            title: "Crear Evento",
-            headerStyle: {
-              backgroundColor: "#f2f2f2",
-            },
-            headerTintColor: "#333", // color del texto y botones del header
-            headerTitleStyle: {
-              fontWeight: "bold",
-              fontSize: 20,
-            },
-            headerTitleAlign: "center",
-          }}
-        />
-        <Tab.Screen name="Events" component={EventLine} />
-      </Tab.Navigator>
-    </NavigationContainer>
+          headerTintColor: "#333", // color del texto y botones del header
+          headerTitleStyle: {
+            fontWeight: "bold",
+            fontSize: 20,
+          },
+          headerTitleAlign: "center",
+        }}
+      />
+      <Tab.Screen name="Events" component={EventLine} />
+    </Tab.Navigator>
   );
 }

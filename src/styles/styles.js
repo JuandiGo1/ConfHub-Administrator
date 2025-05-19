@@ -1,6 +1,39 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+   modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)', // semitransparente
+    justifyContent: 'center', // <-- Aquí cambias la posición: 'flex-start', 'center', 'flex-end'
+    alignItems: 'center',
+  },
+  modalContainer: {
+    marginTop: 100, // puedes ajustar el desplazamiento desde arriba
+    width: 300,
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -52,6 +85,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#444",
   },
+  fab: {
+    position: "absolute",
+    margin: 16,
+    right: 170,
+    bottom: 0,
+    backgroundColor:"red"
+  },
+  fab2: {
+    position: "absolute",
+    margin: 16,
+    right: 40,
+    bottom: 0,
+  },     
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
@@ -60,6 +106,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     fontSize: 15,
     backgroundColor: "#fafafa",
+
   },
 });
 
