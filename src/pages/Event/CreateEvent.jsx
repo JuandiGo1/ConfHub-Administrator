@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, Text, TextInput, Button, ScrollView, TouchableOpacity } from "react-native";
-import styles from "../styles/styles";
-import { createEvent } from "../services/eventService";
+import styles from "../../styles/styles";
+import { createEvent } from "../../services/eventService";
 
 export default function CreateEvent() {
   const [title, setTitle] = useState("");

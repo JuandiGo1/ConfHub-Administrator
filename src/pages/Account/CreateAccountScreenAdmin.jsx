@@ -6,7 +6,7 @@ import Toast from "react-native-toast-message";
 import * as ImagePicker from "expo-image-picker";
 import { TouchableOpacity, Image } from "react-native";
 import { Platform } from "react-native";
-import { makeAdmin } from "../services/adminService";
+import { makeAdmin } from "../../services/adminService";
 
 export default function CreateAccountScreenAdmin({ navigation }) {
   const [name, setName] = useState("");
