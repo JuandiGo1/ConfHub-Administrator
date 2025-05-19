@@ -63,6 +63,10 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-between",
   },
+  eventsGrid: {
+    flexDirection: "column",
+    width: "100%",
+  },
   card: {
     width: "48%",
     borderRadius: 15,
@@ -93,6 +97,16 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 40,
     bottom: 0,
+  },     
+  input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 12,
+    fontSize: 15,
+    backgroundColor: "#fafafa",
+
   },
 });
 
