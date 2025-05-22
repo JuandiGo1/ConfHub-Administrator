@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button } from "react-native";
+import { View, Text, TextInput, Button, Platform, TouchableOpacity, Image } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
 import Toast from "react-native-toast-message";
 import { makeSpeaker } from "../../services/speakerService";
 import * as ImagePicker from "expo-image-picker";
-import { TouchableOpacity, Image } from "react-native";
-import { Platform } from "react-native";
+
+
 
 export default function CreateAccountScreen({ navigation }) {
   const [name, setName] = useState("");
@@ -267,7 +267,6 @@ export default function CreateAccountScreen({ navigation }) {
               style={{
                 fontSize: 10,
                 display: "flex",
-                fontSize: 10,
                 marginRight: "27px",
                 justifyContent: "center",
                 color: "red",

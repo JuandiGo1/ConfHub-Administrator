@@ -1,5 +1,6 @@
-const API_BASE_URL = "http://localhost:3000/api/speakers";
 import { getData, storeData } from "../storage/localStorage";
+const API_BASE_URL = "http://localhost:3000/api/speakers";
+
 
 /*
  * Loguea un speaker
