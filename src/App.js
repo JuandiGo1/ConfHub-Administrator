@@ -2,13 +2,13 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import Home from "./pages/Home";
-import EventLine from "./pages/EventLine";
-import CreateEvent from "./pages/CreateEvent";
+import EventsScreen from "./pages/Event/EventsScreen";
+import CreateEvent from "./pages/Event/CreateEvent";
 import { Ionicons } from "@expo/vector-icons";
 import LoginScreen from "./pages/LoginScreen";
-import CreateAccountScreen from "./pages/CreateAccountScreen";
+import CreateAccountScreen from "./pages/Account/CreateAccountScreen";
 import Toast from "react-native-toast-message";
-import AccountScreen from "./pages/AccountScreen";
+import AccountScreen from "./pages/Account/AccountScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -56,10 +56,10 @@ function MainTabs() {
             case "Home":
               iconName = "home";
               break;
-            case "Events":
+            case "Eventos":
               iconName = "calendar-outline";
               break;
-            case "NewEvent":
+            case "Nuevo evento":
               iconName = "add-circle-outline";
               break;
           }
@@ -75,7 +75,7 @@ function MainTabs() {
         options={{ headerShown: false }}
       />
       <Tab.Screen
-        name="NewEvent"
+        name="Nuevo evento"
         component={CreateEvent}
         options={{
           title: "Crear Evento",
@@ -90,7 +90,7 @@ function MainTabs() {
           headerTitleAlign: "center",
         }}
       />
-      <Tab.Screen name="Events" component={EventLine} />
+      <Tab.Screen name="Eventos" component={EventsScreen} />
     </Tab.Navigator>
   );
 }

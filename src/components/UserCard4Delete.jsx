@@ -1,57 +1,10 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, Button } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { deleteSpeaker, getSpeaker } from "../services/speakerService";
 import Toast from "react-native-toast-message";
 import { IconButton, MD3Colors } from "react-native-paper";
+import { deleteSpeaker} from "../services/speakerService";
+import { View, Text } from "react-native";
 
-export default function DeleteUsersScreen() {
-  const [user2Delete, setUser2Delete] = useState(null);
-  const [searched, setSearch] = useState("");
+export default function UserCard4Delete({ user }) {
 
-  const handleSearch = async () => {
-    console.log(searched);
-    if (searched) {
-      setUser2Delete(await getSpeaker(searched));
-    }
-  };
-  return (
-    <View
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 50,
-      }}
-    >
-      <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        <Ionicons size={30} name="search-outline" />
-        <TextInput
-          value={searched}
-          onChangeText={setSearch}
-          placeholder="ingresa el correo a eliminar"
-        />
-        <Button
-          style={{ borderRadius: 30, fontSize: 10 }}
-          title="Buscar"
-          onPress={handleSearch}
-        />
-      </View>
-
-      {user2Delete ? <UserCard user={user2Delete.speaker} /> : ""}
-    </View>
-  );
-}
-
-function UserCard({ user }) {
-  console.log(user);
   const handleDelete = async () => {
     const deleted = await deleteSpeaker(user.email);
 
@@ -63,7 +16,7 @@ function UserCard({ user }) {
         position: "bottom",
         visibilityTime: 2000,
       });
-      
+
     } else {
       Toast.show({
         type: "error",

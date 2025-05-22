@@ -26,7 +26,7 @@ export async function loginAdmin(email, password) {
       await storeData("token", data.token);
       await storeData("email", email);
     }
-   
+
 
     return true;
   } catch (error) {
@@ -130,8 +130,6 @@ export async function getAdmin(email) {
 
     const data = await response.json();
 
-    console.log("email:", email);
-    console.log(await getData("token"));
 
     if (!response.ok) {
       throw new Error("Error al obtener el speaker");

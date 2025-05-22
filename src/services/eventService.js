@@ -17,6 +17,41 @@ export async function getEvents() {
     throw error;
   }
 }
+/**
+ * Obtiene todos los eventos por id.
+ *@param {string} eventid del evento
+ * @returns {Promise<Array>} Lista de eventos.
+ */
+export async function getEventsById(eventId) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/${eventId}`);
+    if (!response.ok) {
+      console.error("Error al obtener el evento");
+      throw new Error("Error al obtener el evento");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+/**
+ * Filtra los eventos dependiendo de un query
+ * @param {string}
+ * @returns {Promise<Array>} Lista de eventos.
+ */
+export async function searchEvents(query) {
+  const events = await getEvents();
+
+  return events.filter((event) => {
+    return (
+      event.name == query ||
+      event.description.includes(query) ||
+      event.tags.includes(query) ||
+      event.category.includes(query)
+    );
+  });
+}
 
 /**
  * Crea un nuevo evento.

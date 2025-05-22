@@ -4,7 +4,8 @@ import formatDate from "../utils/dateFormatter";
 export default function EventCard({ event }) {
   const date = new Date(event.datetime);
   const formattedDate = formatDate(date);
-  
+
+
   return (
     <View style={styles.card}>
       <View style={styles.header}>

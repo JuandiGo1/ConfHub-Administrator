@@ -1,7 +1,7 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import CreateAccountScreenAdmin from "./CreateAccountScreenAdmin";
-import DeleteUsersScreen from "./DeleteUsersScreen";
-import EditAccountData from "./EditAccountData";
+import DeleteAccountsScreen from "./DeleteAccountsScreen";
+import EditAccountDataScreen from "./EditAccountDataScreen";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -22,7 +22,7 @@ export default function AccountScreen({ route, navigation }) {
     >
       <Tab.Screen
         name="Datos"
-        component={EditAccountData}
+        component={EditAccountDataScreen}
         initialParams={{ user }}
       />
 
@@ -32,7 +32,7 @@ export default function AccountScreen({ route, navigation }) {
             name="Crear usuarios"
             component={CreateAccountScreenAdmin}
           />
-          <Tab.Screen name="Eliminar usuarios" component={DeleteUsersScreen} />
+          <Tab.Screen name="Eliminar usuarios" component={DeleteAccountsScreen} />
         </>
       ) : null}
     </Tab.Navigator>
