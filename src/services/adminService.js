@@ -1,5 +1,6 @@
-const API_BASE_URL = "http://localhost:3000/api/admins";
+
 import { getData, storeData } from "../storage/localStorage";
+const API_BASE_URL = "http://10.0.2.2:3000/api/admins";
 
 /*
  * Loguea un administrador
