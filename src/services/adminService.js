@@ -1,5 +1,7 @@
-const API_BASE_URL = "https://confhub-backend-production.up.railway.app/api/admins";
+
 import { getData, storeData } from "../storage/localStorage";
+const API_BASE_URL = "https://confhub-backend-production.up.railway.app/api/admins";
+
 
 /*
  * Loguea un administrador
