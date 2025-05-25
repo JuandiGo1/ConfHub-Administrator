@@ -1,6 +1,7 @@
 
 import { getData, storeData } from "../storage/localStorage";
-const API_BASE_URL = "http://10.0.2.2:3000/api/admins";
+const API_BASE_URL = "https://confhub-backend-production.up.railway.app/api/admins";
+
 
 /*
  * Loguea un administrador
@@ -133,7 +134,7 @@ export async function getAdmin(email) {
 
 
     if (!response.ok) {
-      throw new Error("Error al obtener el speaker");
+      throw new Error("Error al obtener el administrador");
     }
     return data;
   } catch (error) {

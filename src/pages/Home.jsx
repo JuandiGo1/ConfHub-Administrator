@@ -64,6 +64,10 @@ export default function Home() {
     fetchEvents();
   }, []);
 
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
+
   return (
     <SafeAreaProvider style={[styles.container, { paddingTop: insets.top }]}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -78,13 +82,18 @@ export default function Home() {
                   : "Usuario"}
               </Text>
             </View>
-            <Pressable onPress={() => navigation.navigate("Cuenta", { user })}>
-              <Image
-                source={{ uri: "https://i.pravatar.cc/100" }}
-                style={styles.avatar}
-              />
-            </Pressable>
-          </View>
+
+          <Pressable onPress={() => navigation.navigate("Cuenta", { user })}>
+            <Image
+              source={
+                user && user.image
+                  ? { uri: user.image }
+                  : require("../../assets/defaultpfp.png")
+              }
+              style={styles.avatar}
+            />
+          </Pressable>
+        </View>
 
           {/* Tarjetas */}
           <View style={styles.grid}>

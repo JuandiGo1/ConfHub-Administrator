@@ -2,8 +2,8 @@ import { StatusBar } from 'expo-status-bar';
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { Text, View } from 'react-native';
 import styles from '../../styles/styles';
-import Events from './Events';
-import MyEvents from './MyEvents';
+import Events from '../../components/Events';
+import MyEvents from '../../components/MyEvents';
 
 const Tab = createMaterialTopTabNavigator();
 
