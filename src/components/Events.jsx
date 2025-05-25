@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View, TextInput, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { searchEvents } from "../../services/eventService";
-import EventCard from "../../components/EventCard";
-import styles from "../../styles/styles";
+import { searchEvents } from "../services/eventService";
+import EventCard from "./EventCard";
+import styles from "../styles/styles";
 
 export default function Events() {
   const [searched, setSearch] = useState("");

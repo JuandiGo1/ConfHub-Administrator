@@ -1,5 +1,6 @@
+
 import { getData, storeData } from "../storage/localStorage";
-const API_BASE_URL = "http://localhost:3000/api/speakers";
+const API_BASE_URL = "https://confhub-backend-production.up.railway.app/api/speakers";
 
 
 /*
@@ -27,7 +28,7 @@ export async function loginSpeaker(email, password) {
       await storeData("token", data.token);
       await storeData("email", email);
     }
-  
+
     return true;
   } catch (error) {
     console.error("Error:", error);
@@ -43,7 +44,7 @@ export async function loginSpeaker(email, password) {
 
 export async function makeSpeaker(speaker) {
   try {
-    const response = await fetch(`${API_BASE_URL}`, {
+    const response = await fetch(API_BASE_URL, {
       method: "POST",
       body: speaker,
     });
