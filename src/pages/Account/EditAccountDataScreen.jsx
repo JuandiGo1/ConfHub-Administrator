@@ -176,7 +176,7 @@ export default function EditAccountDataScreen({ route }) {
         >
           {!image && (
             <Image
-              source={{ uri: "https://i.pravatar.cc/100" }}
+              source={(user.image) ? {uri:  user.image} : (require('../../../assets/defaultpfp.png'))}
               style={styles.avatar}
             />
           )}

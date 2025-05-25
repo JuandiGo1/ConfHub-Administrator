@@ -31,6 +31,7 @@ export default function LoginScreen({ navigation }) {
 
     const islogged = isAdmin || isSpeaker;
 
+
     if (islogged) {
       navigation.replace("Main");
     } else {
