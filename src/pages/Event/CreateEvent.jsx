@@ -17,7 +17,7 @@ export default function CreateEvent() {
   const [category, setCategory] = useState("");
   const [location, setLocation] = useState("");
   const [attendees, setAttendees] = useState("");
-  const [availablespots, setAvailableSpots] = useState("");
+  const [availableSpots, setAvailableSpots] = useState("");
   const [description, setDescription] = useState("");
   const [speakerName, setSpeakerName] = useState("");
   const [sessionOrder, setSessionOrder] = useState([]);
@@ -61,6 +61,7 @@ export default function CreateEvent() {
       const nameSeparator = speakerName.split(" ").join("+");
       const avatarUrl = `https://avatar.iran.liara.run/username?username=${nameSeparator}`;
       console.log("Avatar URL:", avatarUrl);
+      
       const event = {
         title,
         category,
@@ -189,7 +190,7 @@ export default function CreateEvent() {
         />
         <TextInput
           placeholder="Cupos disponibles"
-          value={availablespots}
+          value={availableSpots}
           onChangeText={setAvailableSpots}
           keyboardType="numeric"
           style={[styles.input,{ flex: 1 }]}

@@ -66,6 +66,10 @@ export default function Home() {
 
   useEffect(() => {
     console.log(user);
+    const setUserData = async () => {
+      await storeData("user", JSON.stringify(user));
+    };
+    setUserData();
   }, [user]);
 
   return (
@@ -83,17 +87,17 @@ export default function Home() {
               </Text>
             </View>
 
-          <Pressable onPress={() => navigation.navigate("Cuenta", { user })}>
-            <Image
-              source={
-                user && user.image
-                  ? { uri: user.image }
-                  : require("../../assets/defaultpfp.png")
-              }
-              style={styles.avatar}
-            />
-          </Pressable>
-        </View>
+            <Pressable onPress={() => navigation.navigate("Cuenta", { user })}>
+              <Image
+                source={
+                  user && user.image
+                    ? { uri: user.image }
+                    : require("../../assets/defaultpfp.png")
+                }
+                style={styles.avatar}
+              />
+            </Pressable>
+          </View>
 
           {/* Tarjetas */}
           <View style={styles.grid}>
