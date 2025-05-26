@@ -1,10 +1,23 @@
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { useState, useEffect } from "react";
 import formatDate from "../utils/dateFormatter";
+import { getData } from "../storage/localStorage";
+
 
 export default function EventCard({ event }) {
   const date = new Date(event.datetime);
   const formattedDate = formatDate(date);
+  const [canEdit, setCanEdit] = useState(false);
 
+  useEffect(() => {
+    const checkPermission = async () => {
+      const email = await getData("email");
+      if (event.user_info === email) {
+        setCanEdit(true);
+      }
+    };
+    checkPermission();
+  }, [event.user_info]);
 
   return (
     <View style={styles.card}>
@@ -14,6 +27,24 @@ export default function EventCard({ event }) {
           <Text style={styles.title}>{event.title}</Text>
           <Text style={styles.speaker}>{event.speakername}</Text>
         </View>
+        {canEdit && (
+          <View style={styles.actions}>
+            <TouchableOpacity
+              onPress={() => console.log("Edit event")}
+              style={styles.actionBtn}
+            >
+              <Text style={styles.actionText}>Editar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => console.log("Delete event")}
+              style={styles.actionBtn}
+            >
+              <Text style={[styles.actionText, { color: "#dc2626" }]}>
+                Borrar
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
       <Text style={styles.description}>{event.description}</Text>
       <View style={styles.infoRow}>
@@ -21,9 +52,12 @@ export default function EventCard({ event }) {
         <Text style={styles.info}>{event.location_}</Text>
       </View>
       <View style={styles.tagsRow}>
-        {event.tags && event.tags.map((tag, idx) => (
-          <Text key={idx} style={styles.tag}>{tag}</Text>
-        ))}
+        {event.tags &&
+          event.tags.map((tag, idx) => (
+            <Text key={idx} style={styles.tag}>
+              {tag}
+            </Text>
+          ))}
       </View>
     </View>
   );
@@ -92,5 +126,20 @@ const styles = StyleSheet.create({
     fontSize: 11,
     marginRight: 4,
     marginBottom: 2,
+  },
+  actions: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 8,
+    gap: 4,
+  },
+  actionBtn: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  actionText: {
+    color: "#2563eb",
+    fontWeight: "bold",
+    fontSize: 13,
   },
 });
