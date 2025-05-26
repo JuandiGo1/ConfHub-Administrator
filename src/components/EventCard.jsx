@@ -9,21 +9,34 @@ import {
 import { useState, useEffect } from "react";
 import formatDate from "../utils/dateFormatter";
 import { getData } from "../storage/localStorage";
+import { deleteEvent } from "../services/eventService";
+import DeleteEventPop from "./DeleteEventPop";
 
 export default function EventCard({ event, onPress }) {
   const date = new Date(event.datetime);
   const formattedDate = formatDate(date);
   const [canEdit, setCanEdit] = useState(false);
+  const [showDeletePop, setShowDeletePop] = useState(false);
 
   useEffect(() => {
     const checkPermission = async () => {
+      const userString = await getData("user");
+      const user = JSON.parse(userString);
       const email = await getData("email");
-      if (event.user_info === email) {
-        setCanEdit(true);
-      }
+      const isAdmin = user.rol === true;
+      setCanEdit(event.user_info === email || isAdmin);
     };
     checkPermission();
   }, [event.user_info]);
+
+  const handleDelete = async () => {
+    try {
+      await deleteEvent(event.eventid);
+      console.log("Evento borrado correctamente");
+    } catch (error) {
+      console.error("Error al borrar el evento:", error);
+    }
+  };
 
   return (
     <Pressable onPress={onPress} style={styles.card}>
@@ -33,6 +46,32 @@ export default function EventCard({ event, onPress }) {
           <Text style={styles.title}>{event.title}</Text>
           <Text style={styles.speaker}>{event.speakername}</Text>
         </View>
+        {canEdit && (
+          <View style={styles.actions}>
+            <TouchableOpacity
+              onPress={() => console.log("Edit event")}
+              style={styles.actionBtn}
+            >
+              <Text style={styles.actionText}>Editar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setShowDeletePop(true)}
+              style={styles.actionBtn}
+            >
+              <Text style={[styles.actionText, { color: "#dc2626" }]}>
+                Borrar
+              </Text>
+            </TouchableOpacity>
+            <DeleteEventPop
+              visible={showDeletePop}
+              onConfirm={async () => {
+                setShowDeletePop(false);
+                await handleDelete();
+              }}
+              onCancel={() => setShowDeletePop(false)}
+            />
+          </View>
+        )}
       </View>
       <Text style={styles.description}>{event.description}</Text>
       <View style={styles.infoRow}>
@@ -47,24 +86,6 @@ export default function EventCard({ event, onPress }) {
             </Text>
           ))}
       </View>
-      {canEdit && (
-        <View style={styles.actions}>
-          <TouchableOpacity
-            onPress={() => console.log("Edit event")}
-            style={styles.actionBtn}
-          >
-            <Text style={styles.actionText}>Editar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => console.log("Delete event")}
-            style={styles.actionBtn}
-          >
-            <Text style={[styles.actionText, { color: "#dc2626" }]}>
-              Borrar
-            </Text>
-          </TouchableOpacity>
-        </View>
-      )}
     </Pressable>
   );
 }
