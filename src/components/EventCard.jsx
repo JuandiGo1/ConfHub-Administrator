@@ -1,13 +1,14 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, Image, StyleSheet, Pressable, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 import formatDate from "../utils/dateFormatter";
 import { getData } from "../storage/localStorage";
 
 
-export default function EventCard({ event }) {
+export default function EventCard({ event, onPress  }) {
   const date = new Date(event.datetime);
   const formattedDate = formatDate(date);
   const [canEdit, setCanEdit] = useState(false);
+
 
   useEffect(() => {
     const checkPermission = async () => {
@@ -20,12 +21,24 @@ export default function EventCard({ event }) {
   }, [event.user_info]);
 
   return (
-    <View style={styles.card}>
-      <View style={styles.header}>
-        <Image source={{ uri: event.speakeravatar }} style={styles.avatar} />
-        <View style={styles.headerText}>
-          <Text style={styles.title}>{event.title}</Text>
-          <Text style={styles.speaker}>{event.speakername}</Text>
+    <Pressable onPress={onPress} style={styles.card}>
+      <View style={styles.card}>
+        <View style={styles.header}>
+          <Image source={{ uri: event.speakeravatar }} style={styles.avatar} />
+          <View style={styles.headerText}>
+            <Text style={styles.title}>{event.title}</Text>
+            <Text style={styles.speaker}>{event.speakername}</Text>
+          </View>
+        </View>
+        <Text style={styles.description}>{event.description}</Text>
+        <View style={styles.infoRow}>
+          <Text style={styles.info}>{formattedDate}</Text>
+          <Text style={styles.info}>{event.location_}</Text>
+        </View>
+        <View style={styles.tagsRow}>
+          {event.tags && event.tags.map((tag, idx) => (
+            <Text key={idx} style={styles.tag}>{tag}</Text>
+          ))}
         </View>
         {canEdit && (
           <View style={styles.actions}>
@@ -46,20 +59,7 @@ export default function EventCard({ event }) {
           </View>
         )}
       </View>
-      <Text style={styles.description}>{event.description}</Text>
-      <View style={styles.infoRow}>
-        <Text style={styles.info}>{formattedDate}</Text>
-        <Text style={styles.info}>{event.location_}</Text>
-      </View>
-      <View style={styles.tagsRow}>
-        {event.tags &&
-          event.tags.map((tag, idx) => (
-            <Text key={idx} style={styles.tag}>
-              {tag}
-            </Text>
-          ))}
-      </View>
-    </View>
+    </Pressable>
   );
 }
 

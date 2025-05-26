@@ -4,6 +4,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import Home from "./pages/Home";
 import EventsScreen from "./pages/Event/EventsScreen";
 import CreateEvent from "./pages/Event/CreateEvent";
+import EventDetailPage from "./pages/Event/EventDetail";
+import TrackListingPage from "./pages/Track/TrackListing";
 import { Ionicons } from "@expo/vector-icons";
 import LoginScreen from "./pages/LoginScreen";
 import CreateAccountScreen from "./pages/Account/CreateAccountScreen";
@@ -35,6 +37,17 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
+            name="EventDetail"
+            component={EventDetailPage}
+            options={{ title: "Detalle del Evento" }}
+          />
+          <Stack.Screen
+            name="Tracks"
+            component={TrackListingPage}
+            options={{ headerShown: true}}
+          />
+
+          <Stack.Screen
             name="Cuenta"
             component={AccountScreen}
             options={{ headerShown: true }}
@@ -61,6 +74,9 @@ function MainTabs() {
               break;
             case "Nuevo evento":
               iconName = "add-circle-outline";
+              break;
+            case "Tracks":
+              iconName = "albums-outline";
               break;
           }
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -91,6 +107,12 @@ function MainTabs() {
         }}
       />
       <Tab.Screen name="Eventos" component={EventsScreen} />
+      <Tab.Screen
+        name="Tracks"
+        component={TrackListingPage}
+        options={{ tabBarLabel: "Tracks" }}
+      />
+
     </Tab.Navigator>
   );
 }
