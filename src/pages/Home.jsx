@@ -55,11 +55,13 @@ export default function Home() {
     const fetchUser = async () => {
       const speaker = await getSpeaker(await getData("email"));
       const admin = await getAdmin(await getData("email"));
-
-      setUser(admin ? admin.admin : speaker.speaker);
+      const currentUser = admin ? admin.admin : speaker.speaker;
+      setUser(currentUser);
+      await storeData("user", JSON.stringify(currentUser));
     };
 
     fetchUser();
+    
 
     fetchEvents();
   }, []);
