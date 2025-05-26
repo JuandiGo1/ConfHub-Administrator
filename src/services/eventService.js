@@ -64,6 +64,7 @@ export async function searchEvents(query) {
 export async function createEvent(event) {
   const token = await getData("token");
   console.log("Token:", token); // Debugging line to check token value
+  console.log("Event data:", event); // Debugging line to check event data
   try {
     const response = await fetch(API_BASE_URL, {
       method: "POST",

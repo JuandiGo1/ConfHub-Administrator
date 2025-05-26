@@ -55,17 +55,23 @@ export default function Home() {
     const fetchUser = async () => {
       const speaker = await getSpeaker(await getData("email"));
       const admin = await getAdmin(await getData("email"));
-
-      setUser(admin ? admin.admin : speaker.speaker);
+      const currentUser = admin ? admin.admin : speaker.speaker;
+      setUser(currentUser);
+      await storeData("user", JSON.stringify(currentUser));
     };
 
     fetchUser();
+    
 
     fetchEvents();
   }, []);
 
   useEffect(() => {
     console.log(user);
+    const setUserData = async () => {
+      await storeData("user", JSON.stringify(user));
+    };
+    setUserData();
   }, [user]);
 
   return (
@@ -83,17 +89,17 @@ export default function Home() {
               </Text>
             </View>
 
-          <Pressable onPress={() => navigation.navigate("Cuenta", { user })}>
-            <Image
-              source={
-                user && user.image
-                  ? { uri: user.image }
-                  : require("../../assets/defaultpfp.png")
-              }
-              style={styles.avatar}
-            />
-          </Pressable>
-        </View>
+            <Pressable onPress={() => navigation.navigate("Cuenta", { user })}>
+              <Image
+                source={
+                  user && user.image
+                    ? { uri: user.image }
+                    : require("../../assets/defaultpfp.png")
+                }
+                style={styles.avatar}
+              />
+            </Pressable>
+          </View>
 
           {/* Tarjetas */}
           <View style={styles.grid}>
