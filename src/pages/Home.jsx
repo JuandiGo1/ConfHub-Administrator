@@ -128,7 +128,7 @@ export default function Home() {
               <EventCard
                 key={index}
                 event={event}
-                onPress={() => console.log("Evento presionado", event)}
+                onPress={() => navigation.navigate("EventDetail", { event })}
               />
             ))}
           </View>

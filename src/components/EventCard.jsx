@@ -1,31 +1,33 @@
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, Pressable } from "react-native";
 import formatDate from "../utils/dateFormatter";
 
-export default function EventCard({ event }) {
+export default function EventCard({ event, onPress  }) {
   const date = new Date(event.datetime);
   const formattedDate = formatDate(date);
 
 
   return (
-    <View style={styles.card}>
-      <View style={styles.header}>
-        <Image source={{ uri: event.speakeravatar }} style={styles.avatar} />
-        <View style={styles.headerText}>
-          <Text style={styles.title}>{event.title}</Text>
-          <Text style={styles.speaker}>{event.speakername}</Text>
+    <Pressable onPress={onPress} style={styles.card}>
+      <View style={styles.card}>
+        <View style={styles.header}>
+          <Image source={{ uri: event.speakeravatar }} style={styles.avatar} />
+          <View style={styles.headerText}>
+            <Text style={styles.title}>{event.title}</Text>
+            <Text style={styles.speaker}>{event.speakername}</Text>
+          </View>
+        </View>
+        <Text style={styles.description}>{event.description}</Text>
+        <View style={styles.infoRow}>
+          <Text style={styles.info}>{formattedDate}</Text>
+          <Text style={styles.info}>{event.location_}</Text>
+        </View>
+        <View style={styles.tagsRow}>
+          {event.tags && event.tags.map((tag, idx) => (
+            <Text key={idx} style={styles.tag}>{tag}</Text>
+          ))}
         </View>
       </View>
-      <Text style={styles.description}>{event.description}</Text>
-      <View style={styles.infoRow}>
-        <Text style={styles.info}>{formattedDate}</Text>
-        <Text style={styles.info}>{event.location_}</Text>
-      </View>
-      <View style={styles.tagsRow}>
-        {event.tags && event.tags.map((tag, idx) => (
-          <Text key={idx} style={styles.tag}>{tag}</Text>
-        ))}
-      </View>
-    </View>
+    </Pressable>
   );
 }
 

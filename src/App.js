@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import Home from "./pages/Home";
 import EventsScreen from "./pages/Event/EventsScreen";
 import CreateEvent from "./pages/Event/CreateEvent";
+import EventDetailPage from "./pages/Event/EventDetail";
 import { Ionicons } from "@expo/vector-icons";
 import LoginScreen from "./pages/LoginScreen";
 import CreateAccountScreen from "./pages/Account/CreateAccountScreen";
@@ -33,6 +34,11 @@ export default function App() {
             name="Main"
             component={MainTabs}
             options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="EventDetail"
+            component={EventDetailPage}
+            options={{ title: "Detalle del Evento" }}
           />
           <Stack.Screen
             name="Cuenta"
