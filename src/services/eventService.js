@@ -1,3 +1,4 @@
+import { getData } from "../storage/localStorage";
 
 const API_BASE_URL = "https://confhub-backend-production.up.railway.app/api/events";
 
@@ -47,7 +48,7 @@ export async function searchEvents(query) {
 
   return events.filter((event) => {
     return (
-      event.name == query ||
+      event.name === query ||
       event.description.includes(query) ||
       event.tags.includes(query) ||
       event.category.includes(query)
@@ -61,10 +62,13 @@ export async function searchEvents(query) {
  * @returns {Promise<Object>} Evento creado.
  */
 export async function createEvent(event) {
+  const token = await getData("token");
+  console.log("Token:", token); // Debugging line to check token value
   try {
     const response = await fetch(API_BASE_URL, {
       method: "POST",
       headers: {
+        "authorization": token ? `Bearer ${token}` : "",
         "Content-Type": "application/json",
       },
       body: JSON.stringify(event),
