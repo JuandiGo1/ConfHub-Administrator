@@ -17,11 +17,11 @@ export default function CreateEvent() {
   const [category, setCategory] = useState("");
   const [location, setLocation] = useState("");
   const [attendees, setAttendees] = useState("");
-  const [availablespots, setAvailableSpots] = useState("");
+  const [availableSpots, setAvailableSpots] = useState("");
   const [description, setDescription] = useState("");
-  const [speakername, setSpeakerName] = useState("");
-  const [speakeravatar, setSpeakerAvatar] = useState("");
-  const [sessionorder, setSessionOrder] = useState([]);
+  const [speakerName, setSpeakerName] = useState("");
+  const [speakerAvatar, setSpeakerAvatar] = useState("");
+  const [sessionOrder, setSessionOrder] = useState([]);
   const [sessionName, setSessionName] = useState("");
   const [sessionDuration, setSessionDuration] = useState("");
   const [tags, setTags] = useState("");
@@ -49,7 +49,7 @@ export default function CreateEvent() {
   const handleAddSession = () => {
     if (sessionName && sessionDuration) {
       setSessionOrder([
-        ...sessionorder,
+        ...sessionOrder,
         { name: sessionName, duration: Number(sessionDuration) },
       ]);
       setSessionName("");
@@ -59,22 +59,22 @@ export default function CreateEvent() {
 
   const handleCreateEvent = async () => {
     try {
-      const nameSeparator = speakername.split(" ").join("+");
+      const nameSeparator = speakerName.split(" ").join("+");
       setSpeakerAvatar(`https://avatar.iran.liara.run/username?username=${nameSeparator}`);
       const event = {
         title,
         category,
-        location_: location,
-        datetime: date.toISOString(),
+        location: location,
+        dateTime: date.toISOString(),
         attendees: Number(attendees),
-        availablespots: Number(availablespots),
+        availableSpots: Number(availableSpots),
         description,
-        speakername,
-        speakeravatar,
-        sessionorder,
+        speakerName,
+        speakeravatar: speakerAvatar,
+        sessionOrder,
         tags: tags.split(",").map((t) => t.trim()),
-        avgscore: 0,
-        numberreviews: 0,
+        avgScore: 0,
+        numberReviews: 0,
         status: "Por empezar",
       };
       await createEvent(event);
@@ -113,7 +113,7 @@ export default function CreateEvent() {
       <Text style={{ marginBottom: 6, fontWeight: "bold" }}>Exponente</Text>
       <TextInput
         placeholder="Nombre del ponente"
-        value={speakername}
+        value={speakerName}
         onChangeText={setSpeakerName}
         style={styles.input}
       />
@@ -174,7 +174,7 @@ export default function CreateEvent() {
         />
         <TextInput
           placeholder="Cupos disponibles"
-          value={availablespots}
+          value={availableSpots}
           onChangeText={setAvailableSpots}
           keyboardType="numeric"
           style={[styles.input,{ flex: 1 }]}
@@ -213,7 +213,7 @@ export default function CreateEvent() {
           <Text style={{ color: "#2563eb", fontWeight: "bold" }}>Agregar</Text>
         </TouchableOpacity>
       </View>
-      {sessionorder.map((s, idx) => (
+      {sessionOrder.map((s, idx) => (
         <Text key={idx} style={{ fontSize: 13, color: "#444" }}>
           {s.name} - {s.duration} min
         </Text>
