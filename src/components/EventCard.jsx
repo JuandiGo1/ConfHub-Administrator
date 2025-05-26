@@ -5,7 +5,6 @@ export default function EventCard({ event, onPress  }) {
   const date = new Date(event.datetime);
   const formattedDate = formatDate(date);
 
-
   return (
     <Pressable onPress={onPress} style={styles.card}>
       <View style={styles.card}>
