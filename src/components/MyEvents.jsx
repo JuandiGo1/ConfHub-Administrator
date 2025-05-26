@@ -11,24 +11,25 @@ export default function MyEvents() {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    const fetchMyEvents = async () => {
-      // Obtiene los datos del usuario logueado
-      const userstring = await getData("user");
-      const user = JSON.parse(userstring);
-      // Si el usuario no tiene eventos, no hace nada
-      if (user.events.length > 0) {
-        const myEvents = await Promise.all(
-          // Mapea los IDs de eventos del usuario a sus detalles
-          user.events.map((eventid) => {
-            return getEventsById(eventid);
-          })
-        );
-        
-        setEvents(myEvents.flat());
-      }
-    };
     fetchMyEvents();
   }, []);
+
+  const fetchMyEvents = async () => {
+    // Obtiene los datos del usuario logueado
+    const userstring = await getData("user");
+    const user = JSON.parse(userstring);
+    // Si el usuario no tiene eventos, no hace nada
+    if (user.events.length > 0) {
+      const myEvents = await Promise.all(
+        // Mapea los IDs de eventos del usuario a sus detalles
+        user.events.map((eventid) => {
+          return getEventsById(eventid);
+        })
+      );
+
+      setEvents(myEvents.flat());
+    }
+  };
 
   const handleRefresh = async () => {
     setRefreshing(true);

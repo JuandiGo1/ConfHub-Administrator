@@ -68,7 +68,7 @@ export default function CreateEvent() {
         location: location,
         dateTime: date.toISOString(),
         attendees: Number(attendees),
-        availableSpots: Number(availablespots),
+        availableSpots: Number(availableSpots),
         description,
         speakerName,
         speakerAvatar: avatarUrl,
