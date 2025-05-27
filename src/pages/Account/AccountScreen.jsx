@@ -6,7 +6,7 @@ import EditAccountDataScreen from "./EditAccountDataScreen";
 const Tab = createMaterialTopTabNavigator();
 
 export default function AccountScreen({ route, navigation }) {
-  const { user } = route.params;
+  const { user, refresh, setRefresh } = route.params;
   return (
     <Tab.Navigator
       screenOptions={{
@@ -23,7 +23,7 @@ export default function AccountScreen({ route, navigation }) {
       <Tab.Screen
         name="Datos"
         component={EditAccountDataScreen}
-        initialParams={{ user }}
+        initialParams={{ user, refresh, setRefresh }}
       />
 
       {user.rol != null ? (

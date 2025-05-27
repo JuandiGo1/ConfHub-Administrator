@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { View, TextInput, FlatList } from "react-native";
+import { View, TextInput, FlatList, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { searchEvents } from "../services/eventService";
 import EventCard from "./EventCard";
-import styles from "../styles/styles";
+
 
 export default function Events() {
   const [searched, setSearch] = useState("");
@@ -20,15 +20,14 @@ export default function Events() {
   };
   return (
     <>
-      <View style={{backgroundColor:"#ffff"}}>
+      <View style={{ backgroundColor: "#ffff" }}>
         <View
           style={{
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            justifyContent:"center",
-            marginTop:10,
-
+            justifyContent: "center",
+            marginTop: 10,
           }}
         >
           <TextInput
@@ -51,13 +50,21 @@ export default function Events() {
           />
         </View>
       </View>
-
-      <FlatList
-        style={{backgroundColor:"#ffff"}}
-        data={events}
-        renderItem={({ item }) => <EventCard event={item} />}
-        keyExtractor={(item) => item.eventid}
-      />
+      {events && events.length === 0 && (
+        <View style={{ padding: 20, alignItems: "center" }}>
+          <Text style={{ fontSize: 18, color: "gray" }}>
+            No se encontraron eventos.
+          </Text>
+        </View>
+      )}
+      {events && events.length > 0 && (
+        <FlatList
+          style={{ backgroundColor: "#ffff" }}
+          data={events}
+          renderItem={({ item }) => <EventCard event={item} />}
+          keyExtractor={(item) => item.eventid}
+        />
+      )}
     </>
   );
 }

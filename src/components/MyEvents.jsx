@@ -32,6 +32,7 @@ export default function MyEvents() {
   };
 
   const handleRefresh = async () => {
+    
     setRefreshing(true);
     await fetchMyEvents(); // vuelve a pedir los datos
     setRefreshing(false); // se quita el spinner
