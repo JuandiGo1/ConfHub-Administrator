@@ -24,6 +24,7 @@ export default function EventCard({ event, onPress, onDelete }) {
       const user = JSON.parse(userString);
       const email = await getData("email");
       const isAdmin = user.rol === true;
+      console.log("ES ADMIN?", isAdmin)
       setCanEdit(event.user_info === email || isAdmin);
     };
     checkPermission();
