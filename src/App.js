@@ -5,7 +5,7 @@ import Home from "./pages/Home";
 import EventsScreen from "./pages/Event/EventsScreen";
 import CreateEvent from "./pages/Event/CreateEvent";
 import EventDetailPage from "./pages/Event/EventDetail";
-import TrackListingPage from "./pages/Track/TrackListing";
+import TrackListingPage from "./pages/Track/TrackListingPage";
 import { Ionicons } from "@expo/vector-icons";
 import LoginScreen from "./pages/LoginScreen";
 import CreateAccountScreen from "./pages/Account/CreateAccountScreen";
