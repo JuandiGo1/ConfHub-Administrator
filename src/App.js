@@ -11,6 +11,7 @@ import LoginScreen from "./pages/LoginScreen";
 import CreateAccountScreen from "./pages/Account/CreateAccountScreen";
 import Toast from "react-native-toast-message";
 import AccountScreen from "./pages/Account/AccountScreen";
+import DashboardScreen from "./pages/Dashboard/DashboardScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -77,6 +78,8 @@ function MainTabs() {
               break;
             case "Tracks":
               iconName = "albums-outline";
+            case "Dashboard":
+              iconName = "stats-chart";
               break;
           }
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -107,6 +110,22 @@ function MainTabs() {
         }}
       />
       <Tab.Screen name="Eventos" component={EventsScreen} />
+        <Tab.Screen
+        name="Dashboard"
+        component={DashboardScreen}
+        options={{
+          title: "Estadísticas",
+          headerStyle: {
+            backgroundColor: "#f2f2f2",
+          },
+          headerTintColor: "#333",
+          headerTitleStyle: {
+            fontWeight: "bold",
+            fontSize: 20,
+          },
+          headerTitleAlign: "center",
+        }}
+      />
       <Tab.Screen
         name="Tracks"
         component={TrackListingPage}
