@@ -206,12 +206,6 @@ export default function CreateEvent() {
         multiline
         numberOfLines={4}
       />
-      <TextInput
-        placeholder="Nombre del ponente"
-        value={speakerName}
-        onChangeText={setSpeakerName}
-        style={styles.input}
-      />
       <Text style={{ marginTop: 10, fontWeight: "bold" }}>Sesiones</Text>
       <View style={{ flexDirection: "row", justifyContent:"center", alignContent: "center", gap: 8, marginBottom: 8,  }}>
         <TextInput

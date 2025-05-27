@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { View, FlatList, Text } from "react-native";
 
 import { getEventsById } from "../services/eventService";
 import EventCard from "./EventCard";
 import { getData } from "../storage/localStorage";
 import styles from "../styles/styles";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function MyEvents() {
   const [events, setEvents] = useState(null);
@@ -13,6 +14,16 @@ export default function MyEvents() {
   useEffect(() => {
     fetchMyEvents();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchMyEvents();
+    }, [])
+  );
+
+  const handleDelete = async (event) => {
+    await fetchMyEvents();
+  };
 
   const fetchMyEvents = async () => {
     // Obtiene los datos del usuario logueado
@@ -41,7 +52,9 @@ export default function MyEvents() {
       {events == null ? <Text>Aún no creas eventos</Text> : null}
       <FlatList
         data={events}
-        renderItem={({ item }) => <EventCard event={item} />}
+        renderItem={({ item }) => (
+          <EventCard event={item} onDelete={handleDelete} />
+        )}
         keyExtractor={(item) => item.eventid}
         refreshing={refreshing}
         onRefresh={handleRefresh}

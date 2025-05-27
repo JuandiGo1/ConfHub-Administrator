@@ -8,11 +8,11 @@ import {
 } from "react-native";
 import { useState, useEffect } from "react";
 import formatDate from "../utils/dateFormatter";
-import { getData } from "../storage/localStorage";
+import { getData, storeData} from "../storage/localStorage";
 import { deleteEvent } from "../services/eventService";
 import DeleteEventPop from "./DeleteEventPop";
 
-export default function EventCard({ event, onPress }) {
+export default function EventCard({ event, onPress, onDelete }) {
   const date = new Date(event.datetime);
   const formattedDate = formatDate(date);
   const [canEdit, setCanEdit] = useState(false);
@@ -32,6 +32,13 @@ export default function EventCard({ event, onPress }) {
   const handleDelete = async () => {
     try {
       await deleteEvent(event.eventid);
+      // Quitar el eventid del array de eventos del usuario en localStorage
+      const userString = await getData("user");
+      const user = JSON.parse(userString);
+      console.log("Evento borrado:", event.eventid);
+      user.events = user.events.filter((id) => id !== event.eventid);
+      await storeData("user", JSON.stringify(user));
+      console.log("Evento eliminado del usuario:", user.events);
       console.log("Evento borrado correctamente");
     } catch (error) {
       console.error("Error al borrar el evento:", error);
@@ -67,6 +74,7 @@ export default function EventCard({ event, onPress }) {
               onConfirm={async () => {
                 setShowDeletePop(false);
                 await handleDelete();
+                if (onDelete) onDelete(event);
               }}
               onCancel={() => setShowDeletePop(false)}
             />
