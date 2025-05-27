@@ -3,13 +3,16 @@ import { View, FlatList, Text } from "react-native";
 
 import { getEventsById } from "../services/eventService";
 import EventCard from "./EventCard";
-import { getData } from "../storage/localStorage";
+import { getData, storeData } from "../storage/localStorage";
 import styles from "../styles/styles";
 import { useFocusEffect } from "@react-navigation/native";
+import { getSpeaker } from "../services/speakerService";
+import { getAdmin } from "../services/adminService";
 
 export default function MyEvents() {
   const [events, setEvents] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     fetchMyEvents();
@@ -17,9 +20,18 @@ export default function MyEvents() {
 
   useFocusEffect(
     useCallback(() => {
+      fetchUser();
       fetchMyEvents();
     }, [])
   );
+
+  const fetchUser = async () => {
+    const speaker = await getSpeaker(await getData("email"));
+    const admin = await getAdmin(await getData("email"));
+    const currentUser = admin ? admin.admin : speaker.speaker;
+    setUser(currentUser);
+    await storeData("user", JSON.stringify(currentUser));
+  };
 
   const handleDelete = async (event) => {
     await fetchMyEvents();

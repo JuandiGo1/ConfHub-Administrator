@@ -24,7 +24,24 @@ export default function Home() {
   const [refresh, setRefresh] = useState(false);
 
   const insets = useSafeAreaInsets();
+
   
+  useEffect(() => {
+    fetchUser();
+    fetchEvents();
+  }, []);
+
+  useEffect(() => {
+    fetchUser();
+    console.log("Usuario refrescado");
+  }, [refresh]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchEvents();
+    }, [])
+  );
+
   const fetchUser = async () => {
     const speaker = await getSpeaker(await getData("email"));
     const admin = await getAdmin(await getData("email"));
@@ -33,22 +50,6 @@ export default function Home() {
     await storeData("user", JSON.stringify(currentUser));
   };
 
-  useEffect(() => {
-
-    fetchUser();
-
-    fetchEvents();
-  }, []);
-
-
-
- 
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchEvents();
-    }, [])
-  );
 
   const fetchEvents = async () => {
     try {
@@ -81,12 +82,6 @@ export default function Home() {
     await fetchEvents();
   };
 
-
-   useEffect(() => {
-      console.log(user)
-      fetchUser();
-  }, [refresh]);
-
   return (
     <SafeAreaProvider style={[styles.container, { paddingTop: insets.top }]}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -110,7 +105,7 @@ export default function Home() {
               <Image
                 source={
                   user && user.image
-                    ? { uri: user.image +  `?${new Date().getTime()}` } // Cache busting
+                    ? { uri: user.image + `?${new Date().getTime()}` } // Cache busting
                     : require("../../assets/defaultpfp.png")
                 }
                 style={styles.avatar}
