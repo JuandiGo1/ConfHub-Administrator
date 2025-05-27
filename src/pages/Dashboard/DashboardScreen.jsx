@@ -185,15 +185,24 @@ const DashboardScreen = () => {
     };
   };
   
+  // Modificar la función preparePieChartData para simplificar las etiquetas
   const preparePieChartData = () => {
     const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
-    return Object.entries(stats.categoryCounts).slice(0, 5).map(([category, count], index) => ({
-      name: category,
-      count,
-      color: colors[index % colors.length],
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15,
-    }));
+    const total = Object.values(stats.categoryCounts).reduce((sum, count) => sum + count, 0);
+    
+    return Object.entries(stats.categoryCounts).slice(0, 5).map(([category, count], index) => {
+      const percentage = ((count / total) * 100).toFixed(1);
+      // Abreviar título si es demasiado largo - usar solo las primeras 4 letras
+      const shortCategory = category.substring(0, 4);
+      
+      return {
+        name: `${shortCategory} ${percentage}%`, // Formato más simple
+        count,
+        color: colors[index % colors.length],
+        legendFontColor: '#7F7F7F',
+        legendFontSize: 12,
+      };
+    });
   };
 
     const prepareMonthlyData = () => {
@@ -252,42 +261,28 @@ const DashboardScreen = () => {
   };
 
   const prepareAttendanceData = () => {
+    const total = stats.totalAttendees + stats.availableSpots;
+    const attendeesPercentage = ((stats.totalAttendees / total) * 100).toFixed(1);
+    const spotsPercentage = ((stats.availableSpots / total) * 100).toFixed(1);
+    
     return [
       {
-        name: 'Asistentes',
+        name: `Asist: ${attendeesPercentage}%`, // Etiqueta más corta
         count: stats.totalAttendees,
         color: '#36A2EB',
         legendFontColor: '#7F7F7F',
-        legendFontSize: 15,
+        legendFontSize: 12,
       },
       {
-        name: 'Plazas disponibles',
+        name: `Libres: ${spotsPercentage}%`, // Etiqueta más corta
         count: stats.availableSpots,
         color: '#FFCE56',
         legendFontColor: '#7F7F7F',
-        legendFontSize: 15,
+        legendFontSize: 12,
       },
     ];
   };
 
-  const prepareFeedbackStatusData = () => {
-    return [
-      {
-        name: 'Respondidos',
-        count: stats.answeredFeedbacks,
-        color: '#4BC0C0',
-        legendFontColor: '#7F7F7F',
-        legendFontSize: 15,
-      },
-      {
-        name: 'Sin responder',
-        count: stats.totalFeedbacks - stats.answeredFeedbacks,
-        color: '#FF6384',
-        legendFontColor: '#7F7F7F',
-        legendFontSize: 15,
-      },
-    ];
-  };
 
   if (loading) {
     return (
@@ -359,7 +354,7 @@ const DashboardScreen = () => {
         <Card style={styles.wideCard}>
           <Card.Content>
             <Text style={styles.cardTitle}>Tasa de Ocupación</Text>
-            <Text style={styles.cardValue}>{stats.capacityRate}%</Text>
+            <Text style={styles.cardValue}>{stats.capacityRate} %</Text>
           </Card.Content>
         </Card>
       </View>
@@ -367,135 +362,175 @@ const DashboardScreen = () => {
       {/* Gráfico de categorías */}
       <View style={styles.chartContainer}>
         <Text style={styles.sectionTitle}>Eventos por Categoría</Text>
-        <PieChart
-          data={preparePieChartData()}
-          width={Dimensions.get('window').width - 32}
-          height={220}
-          chartConfig={{
-            backgroundColor: '#ffffff',
-            backgroundGradientFrom: '#ffffff',
-            backgroundGradientTo: '#ffffff',
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          }}
-          accessor="count"
-          backgroundColor="transparent"
-          paddingLeft="15"
-          absolute
-        />
+        <View style={{ alignItems: 'center', height: 250 }}>
+          <PieChart
+            data={preparePieChartData()}
+            width={Dimensions.get('window').width - 60}
+            height={200}
+            chartConfig={{
+              backgroundColor: '#ffffff',
+              backgroundGradientFrom: '#ffffff',
+              backgroundGradientTo: '#ffffff',
+              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            }}
+            accessor="count"
+            backgroundColor="transparent"
+            paddingLeft="0"
+            center={[0, 0]} // Centrar en (0,0) para que se vea completo
+            absolute
+            hasLegend={true}
+            avoidFalseZero
+            // Nuevas propiedades para mejorar visualización en móvil
+            legendPosition="bottom" 
+            accessible={true}
+          />
+        </View>
       </View>
       
       {/* Gráfico de eventos por mes */}
       <View style={styles.chartContainer}>
         <Text style={styles.sectionTitle}>Eventos por Mes</Text>
+        
+        <ScrollView 
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingRight: 20 }}
+        >
           <LineChart
-          data={prepareMonthlyData()}
-          width={Dimensions.get('window').width - 60} 
-          height={220}
-          chartConfig={{
-            backgroundColor: '#ffffff',
-            backgroundGradientFrom: '#ffffff',
-            backgroundGradientTo: '#ffffff',
-            decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(46, 204, 113, ${opacity})`, 
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            style: {
-              borderRadius: 16
-            },
-            propsForDots: {
-              r: '6', 
-              strokeWidth: '2',
-              stroke: '#2ecc71', 
-              fill: '#ffffff' 
-            },
-            propsForBackgroundLines: {
-              strokeDasharray: '', 
-              stroke: '#e0e0e0', 
-              strokeWidth: 1
-            },
-            formatYLabel: (value) => Math.round(value).toString(),
-            formatXLabel: (value) => value.split(' ')[0],
-            count: 3, 
-          }}
-          bezier
-          withHorizontalLabels={true}
-          withVerticalLabels={true}
-          withInnerLines={true}
-          withOuterLines={true}
-          withShadow={true}
-          yAxisInterval={1}
-          segments={5}
-          style={{
-            marginVertical: 8,
-            borderRadius: 16,
-            paddingRight: 70, // Aumentar el padding derecho
-            paddingLeft: 20,  // Aumentar el padding izquierdo
-            paddingTop: 10,   // Añadir padding superior
-            paddingBottom: 10 // Añadir padding inferior
-          }}
-          yAxisSuffix="" 
-          getDotColor={(_, index) => chartColors[index % chartColors.length]}
-        />
+            data={prepareMonthlyData()}
+            width={Dimensions.get('window').width * 1.1} // Un poco más ancho que la pantalla
+            height={220}
+            chartConfig={{
+              backgroundColor: '#ffffff',
+              backgroundGradientFrom: '#ffffff',
+              backgroundGradientTo: '#ffffff',
+              decimalPlaces: 0,
+              color: (opacity = 1) => `rgba(46, 204, 113, ${opacity})`, 
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              style: {
+                borderRadius: 16
+              },
+              propsForDots: {
+                r: '6', 
+                strokeWidth: '2',
+                stroke: '#2ecc71', 
+                fill: '#ffffff' 
+              },
+              propsForBackgroundLines: {
+                strokeDasharray: '', 
+                stroke: '#e0e0e0', 
+                strokeWidth: 1
+              },
+              formatYLabel: (value) => Math.round(value).toString(),
+              formatXLabel: (value) => value.split(' ')[0],
+              count: 3, 
+            }}
+            bezier
+            withHorizontalLabels={true}
+            withVerticalLabels={true}
+            withInnerLines={true}
+            withOuterLines={true}
+            withShadow={true}
+            yAxisInterval={1}
+            segments={5}
+            style={{
+              marginVertical: 8,
+              borderRadius: 16,
+              paddingRight: 40,
+              paddingLeft: 10,  
+              paddingTop: 10,   
+              paddingBottom: 10 
+            }}
+            yAxisSuffix="" 
+            getDotColor={(_, index) => chartColors[index % chartColors.length]}
+          />
+        </ScrollView>
+        
+        {/* Indicador de desplazamiento */}
+        <View style={styles.scrollIndicator}>
+          <Text style={styles.scrollIndicatorText}>← Deslizar →</Text>
+        </View>
       </View>
 
       {/* Gráfico de distribución de puntuaciones */}
       <View style={styles.chartContainer}>
         <Text style={styles.sectionTitle}>Distribución de Puntuaciones</Text>
-        <BarChart
-          data={prepareFeedbackScoreData()}
-          width={Dimensions.get('window').width - 32}
-          height={220}
-          chartConfig={{
-            backgroundColor: '#ffffff',
-            backgroundGradientFrom: '#ffffff',
-            backgroundGradientTo: '#ffffff',
-            decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(255, 165, 0, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            barPercentage: 0.8, 
-            useShadowColorFromDataset: false,
-            style: {
-              borderRadius: 16
-            },
-            // Asegurar que las etiquetas del eje Y sean correctas
-            formatYLabel: (value) => Math.round(value).toString(),
-            // Definir un número fijo de ticks para el eje Y
-            count: 5,
-          }}
-          fromZero={true} 
-          showBarTops={false} 
-          flatColor={true}
-          withCustomBarColorFromData={true} 
-          style={{
-            marginVertical: 8,
-            borderRadius: 16,
-            paddingRight: 30, // Añadir espacio a la derecha
-            paddingLeft: 10,  // Añadir espacio a la izquierda
-          }}
-          yAxisSuffix=""    
-          verticalLabelRotation={0}
-        />
+        
+        <ScrollView 
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingRight: 20 }}
+        >
+          <BarChart
+            data={prepareFeedbackScoreData()}
+            width={Dimensions.get('window').width * 1.1} // Un poco más ancho que la pantalla
+            height={220}
+            chartConfig={{
+              backgroundColor: '#ffffff',
+              backgroundGradientFrom: '#ffffff',
+              backgroundGradientTo: '#ffffff',
+              decimalPlaces: 0,
+              color: (opacity = 1) => `rgba(255, 165, 0, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              barPercentage: 0.8, 
+              useShadowColorFromDataset: false,
+              style: {
+                borderRadius: 16
+              },
+              formatYLabel: (value) => Math.round(value).toString(),
+              count: 5,
+            }}
+            fromZero={true} 
+            showBarTops={false} 
+            flatColor={true}
+            withCustomBarColorFromData={true} 
+            style={{
+              marginVertical: 8,
+              borderRadius: 16,
+              paddingRight: 20, // Reducido para el ScrollView
+              paddingLeft: 10,
+            }}
+            yAxisSuffix=""    
+            verticalLabelRotation={0}
+          />
+        </ScrollView>
+        
+        {/* Indicador de desplazamiento */}
+        <View style={styles.scrollIndicator}>
+          <Text style={styles.scrollIndicatorText}>← Deslizar →</Text>
+        </View>
       </View>
 
-      {/* Gráfico de asistencia */}
+      {/* Gráfico de ocupación */}
       <View style={styles.chartContainer}>
         <Text style={styles.sectionTitle}>Ocupación de Eventos</Text>
-        <PieChart
-          data={prepareAttendanceData()}
-          width={Dimensions.get('window').width - 32}
-          height={220}
-          chartConfig={{
-            backgroundColor: '#ffffff',
-            backgroundGradientFrom: '#ffffff',
-            backgroundGradientTo: '#ffffff',
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          }}
-          accessor="count"
-          backgroundColor="transparent"
-          paddingLeft="15"
-          absolute
-        />
+        <View style={{ alignItems: 'center', height: 250 }}>
+          <PieChart
+            data={prepareAttendanceData()}
+            width={Dimensions.get('window').width - 60}
+            height={200}
+            chartConfig={{
+              backgroundColor: '#ffffff',
+              backgroundGradientFrom: '#ffffff',
+              backgroundGradientTo: '#ffffff',
+              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            }}
+            accessor="count"
+            backgroundColor="transparent"
+            paddingLeft="0"
+            center={[0, 0]} // Centrar en (0,0)
+            absolute
+            hasLegend={true}
+            avoidFalseZero
+            // Nuevas propiedades para mejorar visualización en móvil
+            legendPosition="bottom"
+            accessible={true}
+          />
+        </View>
       </View>
-      
+
       {/* Tabla de estadísticas por ubicación */}
       <View style={styles.tableContainer}>
         <Text style={styles.sectionTitle}>Eventos por Ubicación</Text>
@@ -645,6 +680,16 @@ const styles = StyleSheet.create({
   tableCell: {
     flex: 1,
     fontSize: 14,
+    fontFamily: 'Arial'
+  },
+  scrollIndicator: {
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  scrollIndicatorText: {
+    fontSize: 12,
+    color: '#999',
+    fontStyle: 'italic',
     fontFamily: 'Arial'
   }
 });
