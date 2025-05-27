@@ -12,7 +12,7 @@ import { FAB } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 
 export default function EditAccountDataScreen({ route }) {
-  const { user } = route.params;
+  const { user, refresh, setRefresh } = route.params;
   const navigation = useNavigation();
   const [name, setName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName);
@@ -122,6 +122,10 @@ export default function EditAccountDataScreen({ route }) {
     }
 
     if (isUpdated) {
+
+       // Actualizar datos del usuario
+      setRefresh((prev) => !prev);
+      
       Toast.show({
         type: "success",
         text1: "Éxito",
@@ -176,7 +180,11 @@ export default function EditAccountDataScreen({ route }) {
         >
           {!image && (
             <Image
-              source={(user.image) ? {uri:  user.image} : (require('../../../assets/defaultpfp.png'))}
+              source={
+                user.image
+                  ? { uri: user.image }
+                  : require("../../../assets/defaultpfp.png")
+              }
               style={styles.avatar}
             />
           )}

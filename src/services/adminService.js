@@ -37,7 +37,7 @@ export async function loginAdmin(email, password) {
   }
 }
 
-/*
+/**
  * Registra un administrador
  * @param {Object} datos del admin.
  * @returns {Promise<boolean>} un booleano verdaro si lo creo falso si no.
@@ -63,9 +63,9 @@ export async function makeAdmin(admin) {
   }
 }
 
-/*
+/**
  * Elimina un administrador
- * @param {string} correo del admin.
+ * @param {string} email del admin.
  * @returns {Promise<boolean>} un booleano verdaro si lo creo falso si no.
  */
 
@@ -89,9 +89,10 @@ export async function deleteAdmin(email) {
   }
 }
 
-/*
+/**
  * Edita un administrador
- * @param {string} correo del admin.
+ * @param {string} email del admin.
+ * @param {Object} admin datos del admin.
  * @returns {Promise<boolean>} un booleano verdaro si lo creo falso si no.
  */
 
@@ -115,12 +116,11 @@ export async function updateAdmin(email, admin) {
   }
 }
 
-/*
+/**
  * obten un administrador
  * @param {string} email del admin.
  * @returns {Promise<Object>} datos del admin.
  */
-
 
 export async function getAdmin(email) {
    try {
