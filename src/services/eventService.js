@@ -105,3 +105,21 @@ export async function deleteEvent(eventId) {
     throw error;
   }
 }
+/**
+ * obten todos los eventos de un track
+  * @param {string} name del track
+ * @returns {Promise<Object>} eventos del track.
+ */
+export async function getEventsFromATrack(name) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/track/${name}`);
+    if (!response.ok) {
+      console.error("Error al obtener los eventos del track");
+      throw new Error("Error al obtener los eventos");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}

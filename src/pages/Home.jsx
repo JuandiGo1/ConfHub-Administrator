@@ -21,29 +21,28 @@ export default function Home() {
   const [eventsActive, setEventsActive] = useState([]);
   const [eventsEnded, setEventsEnded] = useState([]);
   const [eventsToday, setEventsToday] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+
   const insets = useSafeAreaInsets();
+  
+  const fetchUser = async () => {
+    const speaker = await getSpeaker(await getData("email"));
+    const admin = await getAdmin(await getData("email"));
+    const currentUser = admin ? admin.admin : speaker.speaker;
+    setUser(currentUser);
+    await storeData("user", JSON.stringify(currentUser));
+  };
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const speaker = await getSpeaker(await getData("email"));
-      const admin = await getAdmin(await getData("email"));
-      const currentUser = admin ? admin.admin : speaker.speaker;
-      setUser(currentUser);
-      await storeData("user", JSON.stringify(currentUser));
-    };
 
     fetchUser();
 
     fetchEvents();
   }, []);
 
-  useEffect(() => {
-    console.log(user);
-    const setUserData = async () => {
-      await storeData("user", JSON.stringify(user));
-    };
-    setUserData();
-  }, [user]);
+
+
+ 
 
   useFocusEffect(
     useCallback(() => {
@@ -82,6 +81,12 @@ export default function Home() {
     await fetchEvents();
   };
 
+
+   useEffect(() => {
+      console.log(user)
+      fetchUser();
+  }, [refresh]);
+
   return (
     <SafeAreaProvider style={[styles.container, { paddingTop: insets.top }]}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -97,11 +102,15 @@ export default function Home() {
               </Text>
             </View>
 
-            <Pressable onPress={() => navigation.navigate("Cuenta", { user })}>
+            <Pressable
+              onPress={() =>
+                navigation.navigate("Cuenta", { user, refresh, setRefresh })
+              }
+            >
               <Image
                 source={
                   user && user.image
-                    ? { uri: user.image }
+                    ? { uri: user.image +  `?${new Date().getTime()}` } // Cache busting
                     : require("../../assets/defaultpfp.png")
                 }
                 style={styles.avatar}

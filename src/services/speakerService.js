@@ -5,7 +5,7 @@ const API_BASE_URL = "https://confhub-backend-production.up.railway.app/api/spea
 
 
 
-/*
+/**
  * Loguea un speaker
  * @param {Object} speaker correo y contraseña.
  * @returns {Promise<boolean>} .
@@ -38,7 +38,7 @@ export async function loginSpeaker(email, password) {
   }
 }
 
-/*
+/**
  * Registra un speaker
  * @param {Object} datos del speaker.
  * @returns {Promise<boolean>} un booleano verdaro si lo creó, falso si no.
@@ -62,9 +62,9 @@ export async function makeSpeaker(speaker) {
   }
 }
 
-/*
+/**
  * Elimina un speaker
- * @param {string} correo del speaker.
+ * @param {string} email del speaker.
  * @returns {Promise<boolean>} un booleano verdaro si lo eliminó, falso si no.
  */
 
@@ -88,9 +88,10 @@ export async function deleteSpeaker(email) {
   }
 }
 
-/*
+/**
  * Edita un speaker
- * @param {string} correo del speaker.
+ * @param {string} email del speaker
+ * @param {Object} speaker datos del speaker.
  * @returns {Promise<boolean>} un booleano verdaro si lo editó, falso si no.
  */
 
@@ -114,7 +115,7 @@ export async function updateSpeaker(email, speaker) {
   }
 }
 
-/*
+/** 
  * obten un speaker
  * @param {string} email del speaker.
  * @returns {Promise<Object>} datos del speaker.

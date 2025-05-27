@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Animated } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+  Pressable,
+} from "react-native";
 
 export default function Accordion({ title, description, children, extraInfo }) {
   const [open, setOpen] = useState(false);
@@ -31,10 +38,15 @@ export default function Accordion({ title, description, children, extraInfo }) {
           <Text style={accordionStyles.desc}>{description}</Text>
         </View>
 
-        {extraInfo && <View style={accordionStyles.extraInfoWrapper}>{extraInfo}</View>}
+        {extraInfo && (
+          <View style={accordionStyles.extraInfoWrapper}>{extraInfo}</View>
+        )}
 
         <Animated.Text
-          style={[accordionStyles.arrow, { transform: [{ rotate: rotateInterpolate }] }]}
+          style={[
+            accordionStyles.arrow,
+            { transform: [{ rotate: rotateInterpolate }] },
+          ]}
         >
           ▼
         </Animated.Text>
