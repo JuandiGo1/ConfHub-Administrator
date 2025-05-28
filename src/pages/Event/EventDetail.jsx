@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import formatDate from "../../utils/dateFormatter";
+import FeedbackList from '../../components/FeedbackList';
 
 export default function EventDetailPage({ route }) {
   const { event } = route.params;
@@ -42,6 +43,12 @@ export default function EventDetailPage({ route }) {
           </View>
         ))}
       </View>
+      <View style={styles.feedbackSection}>
+        <Text style={styles.sectionTitle}>Feedback</Text>
+      
+        <FeedbackList eventId={event.eventid} />
+      </View>
+
     </ScrollView>
   );
 }
@@ -145,6 +152,15 @@ const styles = StyleSheet.create({
   sessionDesc: {
     fontSize: 13,
     color: "#6B7280",
+  },
+    feedbackSection: {
+    marginTop: 24,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 16,
   },
 });
 

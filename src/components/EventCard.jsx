@@ -50,10 +50,10 @@ export default function EventCard({ event, onPress, onDelete }) {
     <Pressable onPress={onPress} style={styles.card}>
       <View style={styles.header}>
         <Image source={{ uri: event.speakeravatar }} style={styles.avatar} />
-        <View style={styles.headerText}>
-          <Text style={styles.title}>{event.title}</Text>
+         <Text style={styles.title}>{event.title}</Text>
           <Text style={styles.speaker}>{event.speakername}</Text>
-        </View>
+        </View>      <View style={styles.headerText}>
+   
         {canEdit && (
           <View style={styles.actions}>
             <TouchableOpacity
@@ -87,6 +87,12 @@ export default function EventCard({ event, onPress, onDelete }) {
         <Text style={styles.info}>{formattedDate}</Text>
         <Text style={styles.info}>{event.location_}</Text>
       </View>
+      <View style={styles.capacityContainer}>
+        <Text style={styles.capacityText}>
+          {event.attendees}/{event.attendees + event.availablespots} asistentes
+        </Text>
+      </View>
+      
       <View style={styles.tagsRow}>
         {event.tags &&
           event.tags.map((tag, idx) => (
@@ -178,4 +184,19 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 13,
   },
+capacityContainer: {
+  marginTop: -4,
+  marginBottom: 8,
+  alignSelf: "flex-start",
+  backgroundColor: "#E5E7EB", // Tailwind gray-200
+  borderRadius: 8,
+  paddingHorizontal: 8,
+  paddingVertical: 2,
+},
+capacityText: {
+  fontSize: 12,
+  color: "#1F2937", // Tailwind gray-800
+  fontWeight: "600",
+},
+
 });
