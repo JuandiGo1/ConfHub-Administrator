@@ -78,6 +78,7 @@ function MainTabs() {
               break;
             case "Tracks":
               iconName = "albums-outline";
+              break;
             case "Dashboard":
               iconName = "stats-chart";
               break;
