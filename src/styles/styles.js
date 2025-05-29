@@ -8,11 +8,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContainer: {
-    marginTop: 100, // puedes ajustar el desplazamiento desde arriba
-    width: 300,
-    padding: 20,
+    width: "90%", // Ocupa el 90% del ancho de pantalla
+    maxWidth: 400, // No más ancho que 400
     backgroundColor: "white",
     borderRadius: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 25, // Más espacio lateral
+    alignSelf: "center",
   },
   button: {
     borderRadius: 20,
@@ -86,17 +88,13 @@ const styles = StyleSheet.create({
     color: "#444",
   },
   fab: {
-    position: "absolute",
-    margin: 16,
-    right: 170,
-    bottom: 0,
     backgroundColor: "red",
+    marginBottom: 30,
+    marginRight: 20,
   },
   fab2: {
-    position: "absolute",
-    margin: 16,
-    right: 40,
-    bottom: 0,
+    backgroundColor: "purple",
+    marginBottom: 30,
   },
   fab3: {
     position: "absolute",

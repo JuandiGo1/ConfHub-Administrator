@@ -14,15 +14,14 @@ import { useNavigation } from "@react-navigation/native";
 
 import EventCard from "../components/EventCard";
 
-export default function Home() {
+export default function Home({ route }) {
   const navigation = useNavigation();
   const [user, setUser] = useState(null);
   const [events, setEvents] = useState([]);
   const [eventsActive, setEventsActive] = useState([]);
   const [eventsEnded, setEventsEnded] = useState([]);
   const [eventsToday, setEventsToday] = useState([]);
-  const [refresh, setRefresh] = useState(false);
-
+  const [refresh, setRefresh] = useState(false)
   const insets = useSafeAreaInsets();
   const fetchUser = async () => {
     const speaker = await getSpeaker(await getData("email"));
@@ -68,9 +67,9 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    console.log(user)
     fetchUser();
-  }, [refresh]);
+  }, [route.params?.refresh]);
+  
   return (
     <SafeAreaProvider style={[styles.container, { paddingTop: insets.top }]}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -87,14 +86,12 @@ export default function Home() {
             </View>
 
             <Pressable
-              onPress={() =>
-                navigation.navigate("Cuenta", { user, refresh, setRefresh })
-              }
+              onPress={() => navigation.navigate("Cuenta", { user, refresh })}
             >
               <Image
                 source={
                   user && user.image
-                    ? { uri: user.image +  `?${new Date().getTime()}` } // Cache busting
+                    ? { uri: user.image + `?${new Date().getTime()}` } // Cache busting
                     : require("../../assets/defaultpfp.png")
                 }
                 style={styles.avatar}

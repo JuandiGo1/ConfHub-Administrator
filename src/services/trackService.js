@@ -90,7 +90,7 @@ export async function updateTrack(name, track) {
       body: JSON.stringify(track),
     });
     if (!response.ok) {
-      throw new Error("Error al crear el track");
+      throw new Error("Error al actualizar el track");
     } else {
       return true;
     }

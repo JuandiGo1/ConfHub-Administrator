@@ -45,7 +45,7 @@ export default function App() {
           <Stack.Screen
             name="Tracks"
             component={TrackListingPage}
-            options={{ headerShown: true}}
+            options={{ headerShown: true }}
           />
 
           <Stack.Screen
@@ -78,6 +78,7 @@ function MainTabs() {
               break;
             case "Tracks":
               iconName = "albums-outline";
+              break;
             case "Dashboard":
               iconName = "stats-chart";
               break;
@@ -110,7 +111,7 @@ function MainTabs() {
         }}
       />
       <Tab.Screen name="Eventos" component={EventsScreen} />
-        <Tab.Screen
+      <Tab.Screen
         name="Dashboard"
         component={DashboardScreen}
         options={{
@@ -131,7 +132,6 @@ function MainTabs() {
         component={TrackListingPage}
         options={{ tabBarLabel: "Tracks" }}
       />
-
     </Tab.Navigator>
   );
 }
