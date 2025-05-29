@@ -74,7 +74,12 @@ export default function MyEvents() {
           onRefresh={handleRefresh}
         />
         <Portal>
-          <Modal visible={modalVisible} onDismiss={() => handleModalClose(false)}>
+          <Modal
+            visible={modalVisible}
+            onDismiss={() => handleModalClose(false)}
+            contentContainerStyle={{ flex: 1, justifyContent: "flex-start" }}
+            style={{ flex: 1, margin: 0, justifyContent: "flex-start" }}
+          >
             {selectedEvent && (
               <EditEventModal
                 event={selectedEvent}
