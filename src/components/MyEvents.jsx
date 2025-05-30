@@ -1,18 +1,41 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { View, FlatList, Text } from "react-native";
-import { IconButton, MD3Colors } from "react-native-paper";
-import { getEventsById, searchEvents } from "../services/eventService";
+
+import { getEventsById } from "../services/eventService";
 import EventCard from "./EventCard";
-import { getData } from "../storage/localStorage";
+import { getData, storeData } from "../storage/localStorage";
 import styles from "../styles/styles";
+import { useFocusEffect } from "@react-navigation/native";
+import { getSpeaker } from "../services/speakerService";
+import { getAdmin } from "../services/adminService";
 
 export default function MyEvents() {
   const [events, setEvents] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     fetchMyEvents();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUser();
+      fetchMyEvents();
+    }, [])
+  );
+
+  const fetchUser = async () => {
+    const speaker = await getSpeaker(await getData("email"));
+    const admin = await getAdmin(await getData("email"));
+    const currentUser = admin ? admin.admin : speaker.speaker;
+    setUser(currentUser);
+    await storeData("user", JSON.stringify(currentUser));
+  };
+
+  const handleDelete = async (event) => {
+    await fetchMyEvents();
+  };
 
   const fetchMyEvents = async () => {
     // Obtiene los datos del usuario logueado
@@ -42,7 +65,9 @@ export default function MyEvents() {
       {events == null ? <Text>Aún no creas eventos</Text> : null}
       <FlatList
         data={events}
-        renderItem={({ item }) => <EventCard event={item} />}
+        renderItem={({ item }) => (
+          <EventCard event={item} onDelete={handleDelete} />
+        )}
         keyExtractor={(item) => item.eventid}
         refreshing={refreshing}
         onRefresh={handleRefresh}

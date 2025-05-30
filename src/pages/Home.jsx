@@ -4,13 +4,13 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import styles from "../styles/styles";
 import { getEvents } from "../services/eventService";
 import { getSpeaker } from "../services/speakerService";
 import { getData, storeData } from "../storage/localStorage";
 import { getAdmin } from "../services/adminService";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 
 import EventCard from "../components/EventCard";
 
@@ -23,6 +23,24 @@ export default function Home({ route }) {
   const [eventsToday, setEventsToday] = useState([]);
   const [refresh, setRefresh] = useState(false)
   const insets = useSafeAreaInsets();
+
+  
+  useEffect(() => {
+    fetchUser();
+    fetchEvents();
+  }, []);
+
+  useEffect(() => {
+    fetchUser();
+    console.log("Usuario refrescado");
+  }, [refresh]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchEvents();
+    }, [])
+  );
+
   const fetchUser = async () => {
     const speaker = await getSpeaker(await getData("email"));
     const admin = await getAdmin(await getData("email"));
@@ -31,45 +49,43 @@ export default function Home({ route }) {
     await storeData("user", JSON.stringify(currentUser));
   };
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await getEvents();
-        const today = new Date();
-        setEvents(response);
 
-        setEventsActive(
-          response.filter((event) => event.status === "Por empezar")
-        );
+  const fetchEvents = async () => {
+    try {
+      const response = await getEvents();
+      const today = new Date();
+      setEvents(response);
 
-        setEventsEnded(
-          response.filter((event) => event.status === "Finalizado")
-        );
+      setEventsActive(
+        response.filter((event) => event.status === "Por empezar")
+      );
 
-        setEventsToday(
-          response.filter((event) => {
-            const eventDate = new Date(event.datetime); // Convertir datetime a Date
-            return (
-              eventDate.getDate() === today.getDate() &&
-              eventDate.getMonth() === today.getMonth() &&
-              eventDate.getFullYear() === today.getFullYear()
-            );
-          })
-        );
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      }
-    };
+      setEventsEnded(response.filter((event) => event.status === "Finalizado"));
 
-    fetchUser();
+      setEventsToday(
+        response.filter((event) => {
+          const eventDate = new Date(event.datetime); // Convertir datetime a Date
+          return (
+            eventDate.getDate() === today.getDate() &&
+            eventDate.getMonth() === today.getMonth() &&
+            eventDate.getFullYear() === today.getFullYear()
+          );
+        })
+      );
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
 
-    fetchEvents();
-  }, []);
+  const handleDelete = async (event) => {
+    await fetchEvents();
+  };
 
-  useEffect(() => {
-    fetchUser();
-  }, [route.params?.refresh]);
-  
+
+//   useEffect(() => {
+//     fetchUser();
+//   }, [route.params?.refresh]);
+
   return (
     <SafeAreaProvider style={[styles.container, { paddingTop: insets.top }]}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -133,6 +149,7 @@ export default function Home({ route }) {
                 key={index}
                 event={event}
                 onPress={() => navigation.navigate("EventDetail", { event })}
+                onDelete={handleDelete}
               />
             ))}
           </View>

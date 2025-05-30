@@ -11,6 +11,11 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import styles from "../../styles/styles";
 import { createEvent } from "../../services/eventService";
+import {
+  isNotEmpty,
+  isOnlyText,
+  isPositiveNumber,
+} from "../../utils/validations";
 
 export default function CreateEvent() {
   const [title, setTitle] = useState("");
@@ -57,11 +62,58 @@ export default function CreateEvent() {
   };
 
   const handleCreateEvent = async () => {
+    if (!isNotEmpty(title)) {
+      setMessage("El título es obligatorio.");
+      return;
+    }
+    if (!isNotEmpty(category) || !isOnlyText(category)) {
+      setMessage("La categoría es obligatoria y solo debe contener letras.");
+      return;
+    }
+    if (!isNotEmpty(location)) {
+      setMessage("La ubicación es obligatoria.");
+      return;
+    }
+    if (!isNotEmpty(speakerName) || !isOnlyText(speakerName)) {
+      setMessage(
+        "El nombre del ponente es obligatorio y solo debe contener letras."
+      );
+      return;
+    }
+    if (!isNotEmpty(attendees) || !isPositiveNumber(attendees)) {
+      setMessage(
+        "El número de asistentes es obligatorio y debe ser un número positivo."
+      );
+      return;
+    }
+    if (!isNotEmpty(availableSpots) || !isPositiveNumber(availableSpots)) {
+      setMessage(
+        "Los cupos disponibles son obligatorios y deben ser un número positivo."
+      );
+      return;
+    }
+    if (!isNotEmpty(description)) {
+      setMessage("La descripción es obligatoria.");
+      return;
+    }
+    if (
+      !sessionOrder.every(
+        (s) => isNotEmpty(s.name) && isPositiveNumber(s.duration)
+      )
+    ) {
+      setMessage("Todas las sesiones deben tener nombre y duración positiva.");
+      return;
+    }
+    if (!isNotEmpty(tags)) {
+      setMessage("Debe ingresar al menos un tag.");
+      return;
+    }
+
     try {
       const nameSeparator = speakerName.split(" ").join("+");
       const avatarUrl = `https://avatar.iran.liara.run/username?username=${nameSeparator}`;
       console.log("Avatar URL:", avatarUrl);
-      
+
       const event = {
         title,
         category,
@@ -94,7 +146,6 @@ export default function CreateEvent() {
       setDate(new Date());
       setShowDate(false);
       setShowTime(false);
-
     } catch (error) {
       setMessage("Error al crear el evento", error.message);
     }
@@ -105,7 +156,9 @@ export default function CreateEvent() {
       style={{ flex: 1, backgroundColor: "#fff" }}
       contentContainerStyle={{ padding: 20 }}
     >
-      <Text style={{ marginBottom: 6, fontWeight: "bold" }}>Nombre del evento</Text>
+      <Text style={{ marginBottom: 6, fontWeight: "bold" }}>
+        Nombre del evento
+      </Text>
       <TextInput
         placeholder="Título"
         value={title}
@@ -179,25 +232,29 @@ export default function CreateEvent() {
         />
       )}
 
-      <Text style={{ marginBottom: 6, fontWeight: "bold" }}>Asistentes y cupos disponibles</Text>
-      <View style={{ flexDirection: "row", gap: 10, marginBottom: 12 }}>
+      <Text style={{ marginBottom: 6, fontWeight: "bold" }}>
+        Asistentes y cupos disponibles
+      </Text>
+      <View style={{ flexDirection: "row", gap: 5, marginBottom: 12 }}>
         <TextInput
           placeholder="Asistentes"
           value={attendees}
           onChangeText={setAttendees}
           keyboardType="numeric"
-          style={[styles.input,{ flex: 1 }]}
+          style={[styles.input, { flex: 1 }]}
         />
         <TextInput
           placeholder="Cupos disponibles"
           value={availableSpots}
           onChangeText={setAvailableSpots}
           keyboardType="numeric"
-          style={[styles.input,{ flex: 1 }]}
+          style={[styles.input, { flex: 1 }]}
         />
       </View>
 
-      <Text style={{ marginBottom: 6, fontWeight: "bold" }}>Descripción del evento</Text>
+      <Text style={{ marginBottom: 6, fontWeight: "bold" }}>
+        Descripción del evento
+      </Text>
       <TextInput
         placeholder="Descripción"
         value={description}
@@ -206,14 +263,16 @@ export default function CreateEvent() {
         multiline
         numberOfLines={4}
       />
-      <TextInput
-        placeholder="Nombre del ponente"
-        value={speakerName}
-        onChangeText={setSpeakerName}
-        style={styles.input}
-      />
       <Text style={{ marginTop: 10, fontWeight: "bold" }}>Sesiones</Text>
-      <View style={{ flexDirection: "row", justifyContent:"center", alignContent: "center", gap: 8, marginBottom: 8,  }}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          alignContent: "center",
+          gap: 8,
+          marginBottom: 8,
+        }}
+      >
         <TextInput
           placeholder="Nombre sesión"
           value={sessionName}

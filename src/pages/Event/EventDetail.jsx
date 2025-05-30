@@ -1,10 +1,34 @@
 import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
+import { useEffect, useState } from 'react';
 import formatDate from "../../utils/dateFormatter";
+import PaginatedList from "../../components/PaginatedList";
+import FeedbackCard from "../../components/FeedbackCard";
+import { getFeedbacksForEvent } from "../../services/feedbackService";
 
 export default function EventDetailPage({ route }) {
   const { event } = route.params;
   const formattedDate = formatDate(new Date(event.datetime));
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+    const loadFeedbacks = async () => {
+      try {
+        const data = await getFeedbacksForEvent(event.eventid);
+        setFeedbacks(data);
+      } catch (error) {
+        console.error("Error loading feedbacks:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadFeedbacks();
+  }, [event.id]);
+
+    const renderFeedbackCard = ({ item }) => (
+    <FeedbackCard feedback={item} />
+  );
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>{event.title}</Text>
@@ -41,6 +65,20 @@ export default function EventDetailPage({ route }) {
             <Text style={styles.sessionDesc}>Duración: {session.duration} minutos</Text>
           </View>
         ))}
+      </View>
+      <View style={styles.feedbackSection}>
+        <Text style={styles.sectionTitle}> Feedback</Text>
+        
+        {loading ? (
+          <Text>Loading feedbacks...</Text>
+        ) : (
+          <PaginatedList
+            data={feedbacks}
+            renderItem={renderFeedbackCard}
+            listHeight={400} // Altura fija
+            emptyMessage="No hay feedbacks aún"
+          />
+        )}
       </View>
     </ScrollView>
   );
@@ -145,6 +183,21 @@ const styles = StyleSheet.create({
   sessionDesc: {
     fontSize: 13,
     color: "#6B7280",
+  },
+  feedbackSection: {
+    marginTop: 24,
+    width: '100%',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 16,
+  },
+  loadingContainer: {
+    height: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
