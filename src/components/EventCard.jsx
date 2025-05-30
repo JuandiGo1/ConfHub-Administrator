@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useState, useEffect } from "react";
 import formatDate from "../utils/dateFormatter";
-import { getData, storeData} from "../storage/localStorage";
+import { getData, storeData } from "../storage/localStorage";
 import { deleteEvent } from "../services/eventService";
 import DeleteEventPop from "./DeleteEventPop";
 
@@ -24,7 +24,7 @@ export default function EventCard({ event, onPress, onDelete }) {
       const user = JSON.parse(userString);
       const email = await getData("email");
       const isAdmin = user.rol === true;
-      console.log("ES ADMIN?", isAdmin)
+      console.log("ES ADMIN?", isAdmin);
       setCanEdit(event.user_info === email || isAdmin);
     };
     checkPermission();
@@ -50,10 +50,10 @@ export default function EventCard({ event, onPress, onDelete }) {
     <Pressable onPress={onPress} style={styles.card}>
       <View style={styles.header}>
         <Image source={{ uri: event.speakeravatar }} style={styles.avatar} />
-         <Text style={styles.title}>{event.title}</Text>
+        <View style={styles.headerText}>
+          <Text style={styles.title}>{event.title}</Text>
           <Text style={styles.speaker}>{event.speakername}</Text>
-        </View>      <View style={styles.headerText}>
-   
+        </View>
         {canEdit && (
           <View style={styles.actions}>
             <TouchableOpacity
@@ -87,12 +87,6 @@ export default function EventCard({ event, onPress, onDelete }) {
         <Text style={styles.info}>{formattedDate}</Text>
         <Text style={styles.info}>{event.location_}</Text>
       </View>
-      <View style={styles.capacityContainer}>
-        <Text style={styles.capacityText}>
-          {event.attendees}/{event.attendees + event.availablespots} asistentes
-        </Text>
-      </View>
-      
       <View style={styles.tagsRow}>
         {event.tags &&
           event.tags.map((tag, idx) => (
@@ -184,19 +178,18 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 13,
   },
-capacityContainer: {
-  marginTop: -4,
-  marginBottom: 8,
-  alignSelf: "flex-start",
-  backgroundColor: "#E5E7EB", // Tailwind gray-200
-  borderRadius: 8,
-  paddingHorizontal: 8,
-  paddingVertical: 2,
-},
-capacityText: {
-  fontSize: 12,
-  color: "#1F2937", // Tailwind gray-800
-  fontWeight: "600",
-},
-
+  capacityContainer: {
+    marginTop: -4,
+    marginBottom: 8,
+    alignSelf: "flex-start",
+    backgroundColor: "#E5E7EB", // Tailwind gray-200
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  capacityText: {
+    fontSize: 12,
+    color: "#1F2937", // Tailwind gray-800
+    fontWeight: "600",
+  },
 });
