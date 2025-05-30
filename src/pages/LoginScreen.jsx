@@ -11,6 +11,7 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [secure, setSecure] = useState(false);
 
   const handleLogin = async () => {
     if (!email) {
@@ -46,10 +47,11 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{flex:1}}>
+      <SafeAreaView style={{ flex: 1 }}>
         <View
           style={{
             flex: 1,
+            flexDirection:"column",
             justifyContent: "center",
             alignItems: "center",
             padding: 20,
@@ -59,52 +61,82 @@ export default function LoginScreen({ navigation }) {
             Iniciar sesión
           </Text>
           <Ionicons name="person" size={100} color="#2196f3" />
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: emailError ? 0 : 20,
+            }}
+          >
             <Ionicons name="person" size={25} color="#2196f3" />
             <TextInput
               placeholder="Ingresa el correo"
               value={email}
               onChangeText={setEmail}
-              borderColor={emailError ? "red" : "#ccc"}
               style={{
                 borderWidth: 1,
                 padding: 10,
-                borderRadius:10,
-                marginVertical: 10,
-                width: "100%",
+                borderRadius: 10,
+                borderColor: emailError ? "red" : "#ccc",
               }}
             />
           </View>
           {emailError ? (
-            <Text style={{ color: "red" }}>{emailError}</Text>
+            <Text style={{ color: "red", marginBottom: 20, marginLeft: 25 }}>
+              {emailError}
+            </Text>
           ) : null}
           <View
             style={{
               flexDirection: "row",
               alignItems: "center",
+              marginBottom: passwordError ? 0 : 20,
             }}
           >
             <Ionicons name="lock-closed" size={25} color="#2196f3" />
-            <TextInput
-              placeholder="Ingresa la contraseña"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              borderColor={emailError ? "red" : "#ccc"}
+
+            <View
               style={{
+                flexDirection: "row",
+                alignItems: "center",
                 borderWidth: 1,
-                padding: 10,
-                borderRadius:10,
-                marginVertical: 10,
-                width: "100%",
+                borderColor: passwordError ? "red" : "#ccc",
+                borderRadius: 10,
               }}
-            />
+            >
+              <TextInput
+                placeholder="Ingresa la contraseña"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!secure}
+                style={{
+                  padding: 10,
+                  borderRadius: 10,
+                }}
+              />
+              <Ionicons
+                onPress={() => setSecure(!secure)}
+                style={{ margin: 0, padding: 0 }}
+                name={secure ? "eye-outline" : "eye-off-outline"}
+                size={25}
+                color="#2196f3"
+              />
+              <View />
+            </View>
           </View>
           {passwordError ? (
-            <Text style={{ color: "red" }}>{passwordError}</Text>
+            <Text style={{ color: "red", marginBottom: 20, marginLeft: 25 }}>
+              {passwordError}
+            </Text>
           ) : null}
 
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 10,
+            }}
+          >
             <Text>¿No tienes una cuenta? </Text>
             <Text
               onPress={() => navigation.navigate("Registrar")}

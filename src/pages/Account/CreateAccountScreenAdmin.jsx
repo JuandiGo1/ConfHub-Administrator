@@ -161,7 +161,7 @@ export default function CreateAccountScreenAdmin({ navigation }) {
 
   return (
     <SafeAreaProvider>
-      <ScrollView>
+
         <View
           style={{
             flex: 1,
@@ -208,7 +208,7 @@ export default function CreateAccountScreenAdmin({ navigation }) {
                   flex: 1,
                   borderWidth: 1,
                   padding: 10,
-                  borderRadius:10,
+                  borderRadius: 10,
                   borderColor: nameError ? "red" : "#ccc",
                 }}
               />
@@ -243,8 +243,8 @@ export default function CreateAccountScreenAdmin({ navigation }) {
                   flex: 1,
                   borderWidth: 1,
                   padding: 10,
-                  borderRadius:10,
-                  borderRadius:10,
+                  borderRadius: 10,
+                  borderRadius: 10,
                   borderColor: lastNameError ? "red" : "#ccc",
                 }}
               />
@@ -281,7 +281,7 @@ export default function CreateAccountScreenAdmin({ navigation }) {
                   flex: 1,
                   borderWidth: 1,
                   padding: 10,
-                  borderRadius:10,
+                  borderRadius: 10,
                   borderColor: emailError ? "red" : "#ccc",
                 }}
               />
@@ -319,7 +319,7 @@ export default function CreateAccountScreenAdmin({ navigation }) {
                   flex: 1,
                   borderWidth: 1,
                   padding: 10,
-                  borderRadius:10,
+                  borderRadius: 10,
                   borderColor: passwordError ? "red" : "#ccc",
                 }}
               />
@@ -358,7 +358,7 @@ export default function CreateAccountScreenAdmin({ navigation }) {
                   flex: 1,
                   borderWidth: 1,
                   padding: 10,
-                  borderRadius:10,
+                  borderRadius: 10,
                   borderColor: validatePasswordError ? "red" : "#ccc",
                 }}
               />
@@ -384,7 +384,6 @@ export default function CreateAccountScreenAdmin({ navigation }) {
             onPress={handleRegister}
           />
         </View>
-      </ScrollView>
     </SafeAreaProvider>
   );
 }
