@@ -31,6 +31,7 @@ export default function TrackListingPage() {
 
   // datos de un track
   const [name, setName] = useState("");
+  const [originalName, setOriginalName] = useState("");
   const [description, setDescription] = useState("");
 
   // validar inputs
@@ -112,7 +113,7 @@ export default function TrackListingPage() {
     if (nameError || descriptionError) {
       return;
     }
-    const isUpdated = await updateTrack(name, { name, description });
+    const isUpdated = await updateTrack(originalName, { name, description });
     if (isUpdated) {
       setRefresh((prev) => !prev); // cambia el estado de refresh
       setLoading(true); // muestra el spinner
@@ -200,10 +201,11 @@ export default function TrackListingPage() {
     <SafeAreaProvider>
       <TrackListing
         tracks={tracks}
-        onEdit={(name, description) => {
+        onEdit={(originalName, name, description) => {
           setModalEditVisible(true);
           setDescription(description);
           setName(name);
+          setOriginalName(originalName);
         }}
         onDelete={(name, description) => {
           setModalDeleteVisible(true);
@@ -233,22 +235,26 @@ export default function TrackListingPage() {
             <View
               style={{
                 flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
+                width: "100%",
               }}
             >
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text>Nombre:</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  width: "100%",
+                  marginBottom: nameError ? 0 : 20,
+                }}
+              >
+                <Text style={{ minWidth: 100, flexShrink: 1 }}>Nombre:</Text>
                 <TextInput
-                  placeholder="Ingresa el nombre del track"
+                  placeholder="Conference..."
                   value={name}
                   onChangeText={setName}
                   style={{
+                    flex: 1,
                     borderWidth: 1,
                     padding: 10,
-                    marginLeft: 37,
-                    marginVertical: 10,
-                    width: "100%",
                     borderColor: nameError ? "red" : "#ccc",
                   }}
                 />
@@ -258,28 +264,35 @@ export default function TrackListingPage() {
                   style={{
                     display: "flex",
                     fontSize: 10,
-                    justifyContent: "center",
-                    marginLeft: "72px",
+                    marginLeft: 100,
                     color: "red",
+                    marginBottom: 20,
                   }}
                 >
                   {nameError}
                 </Text>
               ) : null}
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text>Descripción:</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  width: "100%",
+                  marginBottom: descriptionError ? 0 : 20,
+                }}
+              >
+                <Text style={{ minWidth: 100, flexShrink: 1 }}>
+                  Descripción:
+                </Text>
                 <TextInput
-                  placeholder="Ingresa la descripción"
+                  placeholder="Conferencia acerca de..."
                   value={description}
                   onChangeText={setDescription}
                   multiline
                   numberOfLines={4}
                   style={{
+                    flex: 1,
                     borderWidth: 1,
-                    padding: 15,
-                    marginLeft: 10,
-                    marginVertical: 10,
-                    width: "100%",
+                    padding: 10,
                     borderColor: descriptionError ? "red" : "#ccc",
                   }}
                 />
@@ -289,9 +302,9 @@ export default function TrackListingPage() {
                   style={{
                     display: "flex",
                     fontSize: 10,
-                    justifyContent: "center",
-                    marginLeft: "72px",
+                    marginLeft: 100,
                     color: "red",
+                    marginBottom: 20,
                   }}
                 >
                   {descriptionError}
@@ -300,8 +313,8 @@ export default function TrackListingPage() {
               <View
                 style={{
                   flexDirection: "row",
+                  width: "100%",
                   justifyContent: "center",
-                  marginTop: 20,
                 }}
               >
                 <Pressable
@@ -341,22 +354,26 @@ export default function TrackListingPage() {
             <View
               style={{
                 flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
+                width: "100%",
               }}
             >
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text>Nombre:</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  width: "100%",
+                  marginBottom: nameError ? 0 : 20,
+                }}
+              >
+                <Text style={{ minWidth: 100, flexShrink: 1 }}>Nombre:</Text>
                 <TextInput
-                  placeholder="Ingresa el nombre del track"
+                  placeholder="Conference..."
                   value={name}
                   onChangeText={setName}
                   style={{
+                    flex: 1,
                     borderWidth: 1,
                     padding: 10,
-                    marginLeft: 37,
-                    marginVertical: 10,
-                    width: "100%",
                     borderColor: nameError ? "red" : "#ccc",
                   }}
                 />
@@ -366,28 +383,35 @@ export default function TrackListingPage() {
                   style={{
                     display: "flex",
                     fontSize: 10,
-                    justifyContent: "center",
-                    marginLeft: "72px",
+                    marginLeft: 100,
                     color: "red",
+                    marginBottom: 20,
                   }}
                 >
                   {nameError}
                 </Text>
               ) : null}
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text>Descripción:</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  width: "100%",
+                  marginBottom: descriptionError ? 0 : 20,
+                }}
+              >
+                <Text style={{ minWidth: 100, flexShrink: 1 }}>
+                  Descripción:
+                </Text>
                 <TextInput
-                  placeholder="Ingresa la descripción"
+                  placeholder="Conferencia acerca de..."
                   value={description}
                   onChangeText={setDescription}
                   multiline
                   numberOfLines={4}
                   style={{
+                    flex: 1,
                     borderWidth: 1,
-                    padding: 15,
-                    marginLeft: 10,
-                    marginVertical: 10,
-                    width: "100%",
+                    padding: 10,
                     borderColor: descriptionError ? "red" : "#ccc",
                   }}
                 />
@@ -397,9 +421,9 @@ export default function TrackListingPage() {
                   style={{
                     display: "flex",
                     fontSize: 10,
-                    justifyContent: "center",
-                    marginLeft: "72px",
+                    marginLeft: 100,
                     color: "red",
+                    marginBottom: 20,
                   }}
                 >
                   {descriptionError}
@@ -450,9 +474,10 @@ export default function TrackListingPage() {
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
+                width: "100%",
               }}
             >
-              <Text> Estas seguro que deseas Eliminar el track {name}</Text>
+              <Text> ¿Estás seguro que deseas Eliminar el track {name}?</Text>
 
               <View
                 style={{

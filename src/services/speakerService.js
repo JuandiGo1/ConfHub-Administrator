@@ -1,11 +1,9 @@
-
 import { getData, storeData } from "../storage/localStorage";
 
-const API_BASE_URL = "https://confhub-backend-production.up.railway.app/api/speakers";
+const API_BASE_URL =
+  "https://confhub-backend-production.up.railway.app/api/speakers";
 
-
-
-/**
+/*
  * Loguea un speaker
  * @param {Object} speaker correo y contraseña.
  * @returns {Promise<boolean>} .
@@ -22,7 +20,8 @@ export async function loginSpeaker(email, password) {
     });
 
     if (!response.ok) {
-      throw new Error("Error al iniciar sesión");
+      console.log(`Login speaker fallido: ${response.status}`);
+      return false;
     }
 
     const data = await response.json();
@@ -38,7 +37,7 @@ export async function loginSpeaker(email, password) {
   }
 }
 
-/**
+/*
  * Registra un speaker
  * @param {Object} datos del speaker.
  * @returns {Promise<boolean>} un booleano verdaro si lo creó, falso si no.
@@ -62,9 +61,9 @@ export async function makeSpeaker(speaker) {
   }
 }
 
-/**
+/*
  * Elimina un speaker
- * @param {string} email del speaker.
+ * @param {string} correo del speaker.
  * @returns {Promise<boolean>} un booleano verdaro si lo eliminó, falso si no.
  */
 
@@ -79,7 +78,8 @@ export async function deleteSpeaker(email) {
     });
 
     if (!response.ok) {
-      throw new Error("Error al eliminar un speaker");
+      console.log(`Delete speaker fallido: ${response.status}`);
+      return false;
     }
     return true;
   } catch (error) {
@@ -88,10 +88,9 @@ export async function deleteSpeaker(email) {
   }
 }
 
-/**
+/*
  * Edita un speaker
- * @param {string} email del speaker
- * @param {Object} speaker datos del speaker.
+ * @param {string} correo del speaker.
  * @returns {Promise<boolean>} un booleano verdaro si lo editó, falso si no.
  */
 
@@ -102,11 +101,12 @@ export async function updateSpeaker(email, speaker) {
       headers: {
         authorization: `Bearer ${await getData("token")}`,
       },
-      body: speaker
+      body: speaker,
     });
 
     if (!response.ok) {
-      throw new Error("Error al actualizar speaker");
+      console.log(`Update speaker fallido: ${response.status}`);
+      return false;
     }
     return true;
   } catch (error) {
@@ -115,14 +115,14 @@ export async function updateSpeaker(email, speaker) {
   }
 }
 
-/** 
+/*
  * obten un speaker
  * @param {string} email del speaker.
  * @returns {Promise<Object>} datos del speaker.
  */
 
 export async function getSpeaker(email) {
-   try {
+  try {
     const response = await fetch(`${API_BASE_URL}/${email}`, {
       headers: {
         authorization: `Bearer ${await getData("token")}`,
@@ -132,7 +132,8 @@ export async function getSpeaker(email) {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error("Error al obtener el speaker");
+      console.log(`Get speaker fallido: ${response.status}`);
+      return null;
     }
     return data;
   } catch (error) {

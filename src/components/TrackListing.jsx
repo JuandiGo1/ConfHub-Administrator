@@ -15,17 +15,16 @@ const TrackListing = ({ tracks, onEdit, onDelete, setRefresh }) => {
   const navigation = useNavigation();
   useEffect(() => {
     const fetchEvents = async () => {
-    const stringUser = await getData("user");
-    console.log("User data:", JSON.parse(stringUser));
-    setUser(JSON.parse(stringUser));
-    const eventsPromises = tracks.map(async (track) => {
-      const events = await getEventsFromATrack(track.name);
-      return [track.name, events];
-    });
+      const stringUser = await getData("user");
+      setUser(JSON.parse(stringUser));
+      const eventsPromises = tracks.map(async (track) => {
+        const events = await getEventsFromATrack(track.name);
+        return [track.name, events];
+      });
 
-    const eventsResults = await Promise.all(eventsPromises);
+      const eventsResults = await Promise.all(eventsPromises);
 
-    const eventsByTrack = Object.fromEntries(eventsResults);
+      const eventsByTrack = Object.fromEntries(eventsResults);
       setTrackEvents(eventsByTrack);
     };
 
@@ -34,7 +33,7 @@ const TrackListing = ({ tracks, onEdit, onDelete, setRefresh }) => {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    setRefresh(prev => !prev); // cambia el estado de refresh
+    setRefresh((prev) => !prev); // cambia el estado de refresh
     setRefreshing(false); // se quita el spinner
   };
   const renderItem = ({ item }) => {
@@ -81,18 +80,23 @@ const TrackListing = ({ tracks, onEdit, onDelete, setRefresh }) => {
 
   const renderHiddenItem = ({ item }) => (
     <View style={styles.rowBack}>
-      <TouchableOpacity
-        style={[styles.backButton, styles.editButton]}
-        onPress={() => onEdit(item.name, item.description)}
-      >
-        <Ionicons name="pencil" size={40} />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.backButton, styles.deleteButton]}
-        onPress={() => onDelete(item.name, item.description)}
-      >
-        <Ionicons name="trash-bin" size={40} />
-      </TouchableOpacity>
+      {item.name != "None" && (
+        <TouchableOpacity
+          style={[styles.backButton, styles.editButton]}
+          onPress={() => onEdit(item.name, item.name, item.description)}
+        >
+          <Ionicons name="pencil" size={40} />
+        </TouchableOpacity>
+      )}
+      {item.name == "None" && <Text>No puedes modificar este track</Text>}
+      {item.name != "None" && (
+        <TouchableOpacity
+          style={[styles.backButton, styles.deleteButton]}
+          onPress={() => onDelete(item.name, item.description)}
+        >
+          <Ionicons name="trash-bin" size={40} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 
@@ -107,7 +111,6 @@ const TrackListing = ({ tracks, onEdit, onDelete, setRefresh }) => {
       rightOpenValue={-170} // espacio para los dos botones
       disableRightSwipe
       disableLeftSwipe={!(user && user.rol == true)} // deshabilita el swipe si no es admin
-
     />
   );
 };

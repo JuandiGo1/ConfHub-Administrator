@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button } from "react-native";
+import { View, Text, TextInput, Button, ScrollView } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
@@ -161,204 +161,230 @@ export default function CreateAccountScreenAdmin({ navigation }) {
 
   return (
     <SafeAreaProvider>
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 10,
-        }}
-      >
-        <Text style={{ fontSize: 24, marginBottom: 20, fontWeight: 500 }}>
-          Registrar un administrador
-        </Text>
-
-        <TouchableOpacity
-          onPress={pickImage}
-          style={{ alignItems: "center", marginBottom: 20 }}
+      <ScrollView>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 10,
+          }}
         >
-          {!image && <Ionicons name="camera" size={100} color="#2196f3" />}
-
-          {image && (
-            <Image
-              source={{ uri: image }}
-              style={{ width: 100, height: 100, borderRadius: 10 }}
-            />
-          )}
-          <Text style={{ marginVertical: 10 }}>
-            {image ? "Cambia la imagen" : "Selecciona una imagen"}
+          <Text style={{ fontSize: 24, marginBottom: 20, fontWeight: 500 }}>
+            Registrar un administrador
           </Text>
-        </TouchableOpacity>
-        <View style={{ flexDirection: "column" }}>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text>Nombre:</Text>
-            <TextInput
-              placeholder="Ingresa el nombre"
-              value={name}
-              onChangeText={setName}
-              style={{
-                borderWidth: 1,
-                padding: 10,
-                marginLeft: 37,
-                marginVertical: 10,
-                width: "100%",
-                borderColor: nameError ? "red" : "#ccc",
-              }}
-            />
-          </View>
-          {nameError ? (
-            <Text
-              style={{
-                display: "flex",
-                fontSize: 10,
-                justifyContent: "center",
-                marginLeft: "70px",
-                color: "red",
-              }}
-            >
-              {nameError}
-            </Text>
-          ) : null}
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text>Apellido:</Text>
-            <TextInput
-              placeholder="Ingresa el apellido"
-              value={lastName}
-              onChangeText={setLastName}
-              style={{
-                borderWidth: 1,
-                padding: 10,
-                marginLeft: 37,
-                marginVertical: 10,
-                width: "100%",
-                borderColor: lastNameError ? "red" : "#ccc",
-              }}
-            />
-          </View>
-          {lastNameError ? (
-            <Text
-              style={{
-                display: "flex",
-                fontSize: 10,
-                justifyContent: "center",
-                marginLeft: "72px",
-                color: "red",
-              }}
-            >
-              {lastNameError}
-            </Text>
-          ) : null}
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text>Correo:</Text>
 
-            <TextInput
-              placeholder="Ingresa el correo"
-              keyboardType="email-address"
-              value={email}
-              onChangeText={setEmail}
-              style={{
-                borderWidth: 1,
-                padding: 10,
-                marginLeft: 47,
-                marginVertical: 10,
-                width: "100%",
-                borderColor: emailError ? "red" : "#ccc",
-              }}
-            />
-          </View>
-
-          {emailError ? (
-            <Text
-              style={{
-                fontSize: 10,
-                display: "flex",
-                fontSize: 10,
-                marginRight: "27px",
-                justifyContent: "center",
-                color: "red",
-              }}
-            >
-              {emailError}
-            </Text>
-          ) : null}
-
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-            }}
+          <TouchableOpacity
+            onPress={pickImage}
+            style={{ alignItems: "center", marginBottom: 20 }}
           >
-            <Text>Contraseña:</Text>
-            <TextInput
-              placeholder="Ingresa la contraseña"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              style={{
-                borderWidth: 1,
-                padding: 10,
-                marginLeft: 19,
-                marginVertical: 10,
-                width: "100%",
-                borderColor: passwordError ? "red" : "#ccc",
-              }}
-            />
-          </View>
-          {passwordError ? (
-            <Text
-              style={{
-                display: "flex",
-                fontSize: 10,
-                justifyContent: "center",
-                color: "red",
-              }}
-            >
-              {passwordError}
-            </Text>
-          ) : null}
+            {!image && <Ionicons name="camera" size={100} color="#2196f3" />}
 
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <Text>Confirmar contraseña:</Text>
-            <TextInput
-              placeholder="Repite la contraseña"
-              value={validatepassword}
-              onChangeText={setValidatePassword}
-              secureTextEntry
+            {image && (
+              <Image
+                source={{ uri: image }}
+                style={{ width: 100, height: 100, borderRadius: 10 }}
+              />
+            )}
+            <Text style={{ marginVertical: 10 }}>
+              {image ? "Cambia la imagen" : "Selecciona una imagen"}
+            </Text>
+          </TouchableOpacity>
+          <View style={{ flexDirection: "column", width: "100%", padding: 10 }}>
+            <View
               style={{
-                borderWidth: 1,
-                padding: 10,
-                marginVertical: 10,
+                flexDirection: "row",
+                alignItems: "center",
                 width: "100%",
-                borderColor: validatePasswordError ? "red" : "#ccc",
-              }}
-            />
-          </View>
-          {validatePasswordError ? (
-            <Text
-              style={{
-                display: "flex",
-                fontSize: 10,
-                justifyContent: "center",
-                marginLeft: "20px",
-                color: "red",
+                marginBottom: nameError ? 0 : 20,
               }}
             >
-              {validatePasswordError}
-            </Text>
-          ) : null}
+              <Text style={{ minWidth: 100, flexShrink: 1 }}>Nombre:</Text>
+              <TextInput
+                placeholder="Ingresa el nombre"
+                value={name}
+                onChangeText={setName}
+                style={{
+                  flex: 1,
+                  borderWidth: 1,
+                  padding: 10,
+                  borderRadius:10,
+                  borderColor: nameError ? "red" : "#ccc",
+                }}
+              />
+            </View>
+            {nameError ? (
+              <Text
+                style={{
+                  display: "flex",
+                  fontSize: 10,
+                  marginLeft: 100,
+                  color: "red",
+                  marginBottom: 20,
+                }}
+              >
+                {nameError}
+              </Text>
+            ) : null}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                width: "100%",
+                marginBottom: lastNameError ? 0 : 20,
+              }}
+            >
+              <Text style={{ minWidth: 100, flexShrink: 1 }}>Apellido:</Text>
+              <TextInput
+                placeholder="Ingresa el apellido"
+                value={lastName}
+                onChangeText={setLastName}
+                style={{
+                  flex: 1,
+                  borderWidth: 1,
+                  padding: 10,
+                  borderRadius:10,
+                  borderRadius:10,
+                  borderColor: lastNameError ? "red" : "#ccc",
+                }}
+              />
+            </View>
+            {lastNameError ? (
+              <Text
+                style={{
+                  display: "flex",
+                  fontSize: 10,
+                  marginLeft: 100,
+                  color: "red",
+                  marginBottom: 20,
+                }}
+              >
+                {lastNameError}
+              </Text>
+            ) : null}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                width: "100%",
+                marginBottom: emailError ? 0 : 20,
+              }}
+            >
+              <Text style={{ minWidth: 100, flexShrink: 1 }}>Correo:</Text>
+
+              <TextInput
+                placeholder="Ingresa el correo"
+                keyboardType="email-address"
+                value={email}
+                onChangeText={setEmail}
+                style={{
+                  flex: 1,
+                  borderWidth: 1,
+                  padding: 10,
+                  borderRadius:10,
+                  borderColor: emailError ? "red" : "#ccc",
+                }}
+              />
+            </View>
+
+            {emailError ? (
+              <Text
+                style={{
+                  fontSize: 10,
+                  display: "flex",
+                  marginLeft: 100,
+                  color: "red",
+                  marginBottom: 20,
+                }}
+              >
+                {emailError}
+              </Text>
+            ) : null}
+
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                width: "100%",
+                marginBottom: passwordError ? 0 : 20,
+              }}
+            >
+              <Text style={{ minWidth: 100, flexShrink: 1 }}>Contraseña:</Text>
+              <TextInput
+                placeholder="Ingresa la contraseña"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                style={{
+                  flex: 1,
+                  borderWidth: 1,
+                  padding: 10,
+                  borderRadius:10,
+                  borderColor: passwordError ? "red" : "#ccc",
+                }}
+              />
+            </View>
+            {passwordError ? (
+              <Text
+                style={{
+                  display: "flex",
+                  fontSize: 10,
+                  marginLeft: 100,
+                  color: "red",
+                  marginBottom: 20,
+                }}
+              >
+                {passwordError}
+              </Text>
+            ) : null}
+
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                width: "100%",
+                marginBottom: validatePasswordError ? 0 : 20,
+              }}
+            >
+              <Text style={{ minWidth: 100, flexShrink: 1 }}>
+                Confirmar contraseña:
+              </Text>
+              <TextInput
+                placeholder="Repite la contraseña"
+                value={validatepassword}
+                onChangeText={setValidatePassword}
+                secureTextEntry
+                style={{
+                  flex: 1,
+                  borderWidth: 1,
+                  padding: 10,
+                  borderRadius:10,
+                  borderColor: validatePasswordError ? "red" : "#ccc",
+                }}
+              />
+            </View>
+            {validatePasswordError ? (
+              <Text
+                style={{
+                  display: "flex",
+                  fontSize: 10,
+                  marginLeft: 140,
+                  marginBottom: 20,
+                  color: "red",
+                }}
+              >
+                {validatePasswordError}
+              </Text>
+            ) : null}
+          </View>
+
+          <Button
+            style={{ marginTop: 20, borderRadius: 30 }}
+            title="Registrar"
+            onPress={handleRegister}
+          />
         </View>
-
-        <Button
-          style={{ marginTop: 20, borderRadius: 30 }}
-          title="Registrar"
-          onPress={handleRegister}
-        />
-      </View>
+      </ScrollView>
     </SafeAreaProvider>
   );
 }

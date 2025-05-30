@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { loginAdmin } from "../services/adminService";
 import Toast from "react-native-toast-message";
@@ -31,7 +31,6 @@ export default function LoginScreen({ navigation }) {
 
     const islogged = isAdmin || isSpeaker;
 
-
     if (islogged) {
       navigation.replace("Main");
     } else {
@@ -47,74 +46,80 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <SafeAreaProvider>
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 20,
-        }}
-      >
-        <Text style={{ fontSize: 24, marginBottom: 20, fontWeight: 500 }}>
-          Iniciar sesión
-        </Text>
-        <Ionicons name="person" size={100} color="#2196f3" />
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Ionicons name="person" size={25} color="#2196f3" />
-          <TextInput
-            placeholder="Ingresa el correo"
-            value={email}
-            onChangeText={setEmail}
-            borderColor={emailError ? "red" : "#ccc"}
-            style={{
-              borderWidth: 1,
-              padding: 10,
-              marginVertical: 10,
-              width: "100%",
-            }}
-          />
-        </View>
-        {emailError ? <Text style={{ color: "red" }}>{emailError}</Text> : null}
+      <SafeAreaView style={{flex:1}}>
         <View
           style={{
-            flexDirection: "row",
+            flex: 1,
+            justifyContent: "center",
             alignItems: "center",
+            padding: 20,
           }}
         >
-          <Ionicons name="lock-closed" size={25} color="#2196f3" />
-          <TextInput
-            placeholder="Ingresa la contraseña"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            borderColor={emailError ? "red" : "#ccc"}
+          <Text style={{ fontSize: 24, marginBottom: 20, fontWeight: 500 }}>
+            Iniciar sesión
+          </Text>
+          <Ionicons name="person" size={100} color="#2196f3" />
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Ionicons name="person" size={25} color="#2196f3" />
+            <TextInput
+              placeholder="Ingresa el correo"
+              value={email}
+              onChangeText={setEmail}
+              borderColor={emailError ? "red" : "#ccc"}
+              style={{
+                borderWidth: 1,
+                padding: 10,
+                borderRadius:10,
+                marginVertical: 10,
+                width: "100%",
+              }}
+            />
+          </View>
+          {emailError ? (
+            <Text style={{ color: "red" }}>{emailError}</Text>
+          ) : null}
+          <View
             style={{
-              borderWidth: 1,
-              padding: 10,
-              marginVertical: 10,
-              width: "100%",
+              flexDirection: "row",
+              alignItems: "center",
             }}
+          >
+            <Ionicons name="lock-closed" size={25} color="#2196f3" />
+            <TextInput
+              placeholder="Ingresa la contraseña"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              borderColor={emailError ? "red" : "#ccc"}
+              style={{
+                borderWidth: 1,
+                padding: 10,
+                borderRadius:10,
+                marginVertical: 10,
+                width: "100%",
+              }}
+            />
+          </View>
+          {passwordError ? (
+            <Text style={{ color: "red" }}>{passwordError}</Text>
+          ) : null}
+
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text>¿No tienes una cuenta? </Text>
+            <Text
+              onPress={() => navigation.navigate("Registrar")}
+              style={{ color: "blue", textDecorationLine: "underline" }}
+            >
+              Crea una
+            </Text>
+          </View>
+          <Button
+            style={{ marginTop: 20, borderRadius: 30 }}
+            title="Entrar"
+            onPress={handleLogin}
           />
         </View>
-        {passwordError ? (
-          <Text style={{ color: "red" }}>{passwordError}</Text>
-        ) : null}
-
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text>¿No tienes una cuenta? </Text>
-          <Text
-            onPress={() => navigation.navigate("Registrar")}
-            style={{ color: "blue", textDecorationLine: "underline" }}
-          >
-            Crea una
-          </Text>
-        </View>
-        <Button
-          style={{ marginTop: 20, borderRadius: 30 }}
-          title="Entrar"
-          onPress={handleLogin}
-        />
-      </View>
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 }
