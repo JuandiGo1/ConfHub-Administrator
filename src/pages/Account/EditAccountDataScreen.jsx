@@ -155,7 +155,6 @@ export default function EditAccountDataScreen({ route }) {
     });
 
     if (!result.canceled) {
-      console.log(result.assets[0]);
       const localUri = result.assets[0].uri;
       setImage(localUri);
     }
@@ -184,7 +183,7 @@ export default function EditAccountDataScreen({ route }) {
               <Image
                 source={
                   user.image
-                    ? { uri: user.image }
+                    ? { uri: user.image + `?${new Date().getTime()}` }
                     : require("../../../assets/defaultpfp.png")
                 }
                 style={styles.avatar}
