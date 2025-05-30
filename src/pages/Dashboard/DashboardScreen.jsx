@@ -30,13 +30,13 @@ const DashboardScreen = () => {
     answeredFeedbacks: 0,
   });
 
-  const chartColors = [
-    '#2ecc71', // Verde
-    '#3498db', // Azul
-    '#9b59b6', // Púrpura
-    '#f1c40f', // Amarillo
-    '#e74c3c', // Rojo
-  ];
+  const [currentPage, setCurrentPage] = useState(1);
+  const [commentsPerPage] = useState(3); // Número de comentarios por página
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
+  const [subscriptionsPage, setSubscriptionsPage] = useState(1);
+  const [ratingsPage, setRatingsPage] = useState(1);
+  const [eventsPerPage] = useState(5); // Eventos por página en cada tabla
   
   useEffect(() => {
     const fetchData = async () => {
@@ -56,7 +56,6 @@ const DashboardScreen = () => {
         calculateStats(eventsResponse.data, feedbacksResponse.data);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
-        // Si hay error en la conexión, puedes mostrar un mensaje específico
         alert('Error al conectar con la API. Por favor, verifica tu conexión a internet o contacta al administrador.');
       } finally {
         setLoading(false);
@@ -171,122 +170,70 @@ const DashboardScreen = () => {
     });
   };
   
-  // Preparar datos para gráficos
-  const prepareBarChartData = () => {
-    const categories = Object.keys(stats.categoryCounts).slice(0, 5);
-    return {
-      labels: categories,
-      datasets: [
-        {
-          data: categories.map(cat => stats.categoryCounts[cat]),
-          color: (opacity = 1) => `rgba(0, 100, 255, ${opacity})`,
-        },
-      ],
-    };
-  };
   
+  // Modificar la función preparePieChartData para simplificar las etiquetas
   const preparePieChartData = () => {
     const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
-    return Object.entries(stats.categoryCounts).slice(0, 5).map(([category, count], index) => ({
-      name: category,
-      count,
-      color: colors[index % colors.length],
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15,
-    }));
-  };
-
-    const prepareMonthlyData = () => {
-    const sortedMonths = Object.entries(stats.monthlyEvents)
-      .map(([key, value]) => {
-        const [month, year] = key.split('/');
-        return {
-          key,
-          value,
-          date: new Date(`${year}-${month.padStart(2, '0')}-01`)
-        };
-      })
-      .sort((a, b) => a.date - b.date)
-      .slice(0, 5); 
+    const total = Object.values(stats.categoryCounts).reduce((sum, count) => sum + count, 0);
     
-    const labels = sortedMonths.map(item => {
-      const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-      const monthIndex = item.date.getMonth();
-      return `${monthNames[monthIndex]}`;
+    return Object.entries(stats.categoryCounts).slice(0, 5).map(([category, count], index) => {
+      const percentage = ((count / total) * 100).toFixed(1);
+      // Abreviar título si es demasiado largo - usar solo las primeras 4 letras
+      const shortCategory = category.substring(0, 4);
+      
+      return {
+        name: `${shortCategory} ${percentage}%`, // Formato más simple
+        count,
+        color: colors[index % colors.length],
+        legendFontColor: '#7F7F7F',
+        legendFontSize: 12,
+      };
     });
-    
-    return {
-      labels,
-      datasets: [
-        {
-          data: sortedMonths.map(item => item.value),
-          color: (opacity = 1) => `rgba(46, 204, 113, ${opacity})`,
-          strokeWidth: 2,
-          withDots: true,
-          withShadow: true
-        },
-      ],
-      legend: ['Número de eventos']
-    };
   };
 
-  const prepareFeedbackScoreData = () => {
-    const maxValue = Math.max(...stats.feedbackScores);
-    
-    return {
-      labels: ['1★', '2★', '3★', '4★', '5★'],
-      datasets: [
-        {
-          data: stats.feedbackScores,
-          colors: [
-            (opacity = 1) => `rgba(255, 99, 132, ${opacity})`,
-            (opacity = 1) => `rgba(255, 159, 64, ${opacity})`,
-            (opacity = 1) => `rgba(255, 205, 86, ${opacity})`,
-            (opacity = 1) => `rgba(75, 192, 192, ${opacity})`,
-            (opacity = 1) => `rgba(54, 162, 235, ${opacity})`
-          ]
-        }
-      ],
-      legend: [`Máximo: ${maxValue}`]
-    };
-  };
 
   const prepareAttendanceData = () => {
+    const total = stats.totalAttendees + stats.availableSpots;
+    const attendeesPercentage = ((stats.totalAttendees / total) * 100).toFixed(1);
+    const spotsPercentage = ((stats.availableSpots / total) * 100).toFixed(1);
+    
     return [
       {
-        name: 'Asistentes',
+        name: `Asist: ${attendeesPercentage}%`, // Etiqueta más corta
         count: stats.totalAttendees,
         color: '#36A2EB',
         legendFontColor: '#7F7F7F',
-        legendFontSize: 15,
+        legendFontSize: 12,
       },
       {
-        name: 'Plazas disponibles',
+        name: `Libres: ${spotsPercentage}%`, // Etiqueta más corta
         count: stats.availableSpots,
         color: '#FFCE56',
         legendFontColor: '#7F7F7F',
-        legendFontSize: 15,
+        legendFontSize: 12,
       },
     ];
   };
 
-  const prepareFeedbackStatusData = () => {
-    return [
-      {
-        name: 'Respondidos',
-        count: stats.answeredFeedbacks,
-        color: '#4BC0C0',
-        legendFontColor: '#7F7F7F',
-        legendFontSize: 15,
-      },
-      {
-        name: 'Sin responder',
-        count: stats.totalFeedbacks - stats.answeredFeedbacks,
-        color: '#FF6384',
-        legendFontColor: '#7F7F7F',
-        legendFontSize: 15,
-      },
-    ];
+
+  // Añade esta función para cambiar de página en la lista de comentarios
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Añade esta función para filtrar comentarios por evento específico
+  const handleSelectEvent = (eventId) => {
+    setSelectedEvent(eventId === selectedEvent ? null : eventId);
+    setCurrentPage(1); // Reiniciar a la primera página cuando cambia el filtro
+  };
+
+  // Añade estas nuevas funciones para manejar la paginación de las tablas
+  const paginateSubscriptions = (pageNumber) => {
+    setSubscriptionsPage(pageNumber);
+  };
+
+  const paginateRatings = (pageNumber) => {
+    setRatingsPage(pageNumber);
   };
 
   if (loading) {
@@ -359,7 +306,7 @@ const DashboardScreen = () => {
         <Card style={styles.wideCard}>
           <Card.Content>
             <Text style={styles.cardTitle}>Tasa de Ocupación</Text>
-            <Text style={styles.cardValue}>{stats.capacityRate}%</Text>
+            <Text style={styles.cardValue}>{stats.capacityRate} %</Text>
           </Card.Content>
         </Card>
       </View>
@@ -367,135 +314,62 @@ const DashboardScreen = () => {
       {/* Gráfico de categorías */}
       <View style={styles.chartContainer}>
         <Text style={styles.sectionTitle}>Eventos por Categoría</Text>
-        <PieChart
-          data={preparePieChartData()}
-          width={Dimensions.get('window').width - 32}
-          height={220}
-          chartConfig={{
-            backgroundColor: '#ffffff',
-            backgroundGradientFrom: '#ffffff',
-            backgroundGradientTo: '#ffffff',
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          }}
-          accessor="count"
-          backgroundColor="transparent"
-          paddingLeft="15"
-          absolute
-        />
+        <View style={{ alignItems: 'center', height: 250 }}>
+          <PieChart
+            data={preparePieChartData()}
+            width={Dimensions.get('window').width - 60}
+            height={200}
+            chartConfig={{
+              backgroundColor: '#ffffff',
+              backgroundGradientFrom: '#ffffff',
+              backgroundGradientTo: '#ffffff',
+              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            }}
+            accessor="count"
+            backgroundColor="transparent"
+            paddingLeft="0"
+            center={[0, 0]} // Centrar en (0,0) para que se vea completo
+            absolute
+            hasLegend={true}
+            avoidFalseZero
+            // Nuevas propiedades para mejorar visualización en móvil
+            legendPosition="bottom" 
+            accessible={true}
+          />
+        </View>
       </View>
       
-      {/* Gráfico de eventos por mes */}
-      <View style={styles.chartContainer}>
-        <Text style={styles.sectionTitle}>Eventos por Mes</Text>
-          <LineChart
-          data={prepareMonthlyData()}
-          width={Dimensions.get('window').width - 60} 
-          height={220}
-          chartConfig={{
-            backgroundColor: '#ffffff',
-            backgroundGradientFrom: '#ffffff',
-            backgroundGradientTo: '#ffffff',
-            decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(46, 204, 113, ${opacity})`, 
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            style: {
-              borderRadius: 16
-            },
-            propsForDots: {
-              r: '6', 
-              strokeWidth: '2',
-              stroke: '#2ecc71', 
-              fill: '#ffffff' 
-            },
-            propsForBackgroundLines: {
-              strokeDasharray: '', 
-              stroke: '#e0e0e0', 
-              strokeWidth: 1
-            },
-            formatYLabel: (value) => Math.round(value).toString(),
-            formatXLabel: (value) => value.split(' ')[0],
-            count: 3, 
-          }}
-          bezier
-          withHorizontalLabels={true}
-          withVerticalLabels={true}
-          withInnerLines={true}
-          withOuterLines={true}
-          withShadow={true}
-          yAxisInterval={1}
-          segments={5}
-          style={{
-            marginVertical: 8,
-            borderRadius: 16,
-            paddingRight: 70, // Aumentar el padding derecho
-            paddingLeft: 20,  // Aumentar el padding izquierdo
-            paddingTop: 10,   // Añadir padding superior
-            paddingBottom: 10 // Añadir padding inferior
-          }}
-          yAxisSuffix="" 
-          getDotColor={(_, index) => chartColors[index % chartColors.length]}
-        />
-      </View>
 
-      {/* Gráfico de distribución de puntuaciones */}
-      <View style={styles.chartContainer}>
-        <Text style={styles.sectionTitle}>Distribución de Puntuaciones</Text>
-        <BarChart
-          data={prepareFeedbackScoreData()}
-          width={Dimensions.get('window').width - 32}
-          height={220}
-          chartConfig={{
-            backgroundColor: '#ffffff',
-            backgroundGradientFrom: '#ffffff',
-            backgroundGradientTo: '#ffffff',
-            decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(255, 165, 0, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            barPercentage: 0.8, 
-            useShadowColorFromDataset: false,
-            style: {
-              borderRadius: 16
-            },
-            // Asegurar que las etiquetas del eje Y sean correctas
-            formatYLabel: (value) => Math.round(value).toString(),
-            // Definir un número fijo de ticks para el eje Y
-            count: 5,
-          }}
-          fromZero={true} 
-          showBarTops={false} 
-          flatColor={true}
-          withCustomBarColorFromData={true} 
-          style={{
-            marginVertical: 8,
-            borderRadius: 16,
-            paddingRight: 30, // Añadir espacio a la derecha
-            paddingLeft: 10,  // Añadir espacio a la izquierda
-          }}
-          yAxisSuffix=""    
-          verticalLabelRotation={0}
-        />
-      </View>
-
-      {/* Gráfico de asistencia */}
+      {/* Gráfico de ocupación */}
       <View style={styles.chartContainer}>
         <Text style={styles.sectionTitle}>Ocupación de Eventos</Text>
-        <PieChart
-          data={prepareAttendanceData()}
-          width={Dimensions.get('window').width - 32}
-          height={220}
-          chartConfig={{
-            backgroundColor: '#ffffff',
-            backgroundGradientFrom: '#ffffff',
-            backgroundGradientTo: '#ffffff',
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          }}
-          accessor="count"
-          backgroundColor="transparent"
-          paddingLeft="15"
-          absolute
-        />
+        <View style={{ alignItems: 'center', height: 250 }}>
+          <PieChart
+            data={prepareAttendanceData()}
+            width={Dimensions.get('window').width - 60}
+            height={200}
+            chartConfig={{
+              backgroundColor: '#ffffff',
+              backgroundGradientFrom: '#ffffff',
+              backgroundGradientTo: '#ffffff',
+              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            }}
+            accessor="count"
+            backgroundColor="transparent"
+            paddingLeft="0"
+            center={[0, 0]} // Centrar en (0,0)
+            absolute
+            hasLegend={true}
+            avoidFalseZero
+            // Nuevas propiedades para mejorar visualización en móvil
+            legendPosition="bottom"
+            accessible={true}
+          />
+        </View>
       </View>
-      
+
       {/* Tabla de estadísticas por ubicación */}
       <View style={styles.tableContainer}>
         <Text style={styles.sectionTitle}>Eventos por Ubicación</Text>
@@ -524,6 +398,246 @@ const DashboardScreen = () => {
             <Text style={styles.tableCell}>{item.count}</Text>
           </View>
         ))}
+      </View>
+
+      {/* Nueva sección: Total de suscripciones por evento */}
+      <View style={styles.tableContainer}>
+        <Text style={styles.sectionTitle}>Suscripciones por Evento</Text>
+        <View style={styles.tableHeader}>
+          <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Evento</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1, textAlign: 'right' }]}>Asistentes</Text>
+        </View>
+        
+        {(() => {
+          // Filtrar eventos que tienen asistentes y ordenarlos
+          const eventsWithSubscriptions = events
+            .filter(event => event.attendees >= 0)
+            .sort((a, b) => b.attendees - a.attendees);
+            
+          // Si no hay datos
+          if (eventsWithSubscriptions.length === 0) {
+            return (
+              <View style={styles.emptyTableRow}>
+                <Text style={styles.emptyTableText}>No hay datos de asistencia disponibles</Text>
+              </View>
+            );
+          }
+          
+          // Calcular índices para paginación
+          const indexOfLastEvent = subscriptionsPage * eventsPerPage;
+          const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
+          const currentEvents = eventsWithSubscriptions.slice(indexOfFirstEvent, indexOfLastEvent);
+          
+          return (
+            <>
+              {currentEvents.map((event, index) => (
+                <View key={event.id || index} style={[styles.tableRow, index % 2 === 0 ? styles.evenRow : styles.oddRow]}>
+                  <Text 
+                    style={[styles.tableCell, { flex: 2 }]} 
+                    numberOfLines={1} 
+                    ellipsizeMode="tail"
+                  >
+                    {event.title || 'Sin título'}
+                  </Text>
+                  <Text style={[styles.tableCellNumeric, { flex: 1 }]}>
+                    {event.attendees || 0}
+                  </Text>
+                </View>
+              ))}
+              
+              {/* Paginación para tabla de suscripciones */}
+              <View style={styles.tablePagination}>
+                <TouchableOpacity 
+                  style={[styles.pageButton, subscriptionsPage === 1 && styles.disabledPageButton]}
+                  onPress={() => subscriptionsPage > 1 && paginateSubscriptions(subscriptionsPage - 1)}
+                  disabled={subscriptionsPage === 1}
+                >
+                  <Text style={styles.pageButtonText}>Anterior</Text>
+                </TouchableOpacity>
+                
+                <Text style={styles.pageInfo}>
+                  Página {subscriptionsPage} de {Math.ceil(eventsWithSubscriptions.length / eventsPerPage)}
+                </Text>
+                
+                <TouchableOpacity 
+                  style={[styles.pageButton, subscriptionsPage >= Math.ceil(eventsWithSubscriptions.length / eventsPerPage) && styles.disabledPageButton]}
+                  onPress={() => subscriptionsPage < Math.ceil(eventsWithSubscriptions.length / eventsPerPage) && paginateSubscriptions(subscriptionsPage + 1)}
+                  disabled={subscriptionsPage >= Math.ceil(eventsWithSubscriptions.length / eventsPerPage)}
+                >
+                  <Text style={styles.pageButtonText}>Siguiente</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          );
+        })()}
+      </View>
+
+      {/* Nueva sección: Puntuación media por evento */}
+      <View style={styles.tableContainer}>
+        <Text style={styles.sectionTitle}>Puntuación Media por Evento</Text>
+        <View style={styles.tableHeader}>
+          <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Evento</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1, textAlign: 'right' }]}>Valoración</Text>
+        </View>
+        
+        {(() => {
+          // Filtrar eventos con puntuación y ordenarlos
+          const eventsWithRatings = events
+            .filter(event => event.avgscore !== null && event.avgscore !== undefined)
+            .sort((a, b) => b.avgscore - a.avgscore);
+            
+          // Si no hay datos
+          if (eventsWithRatings.length === 0) {
+            return (
+              <View style={styles.emptyTableRow}>
+                <Text style={styles.emptyTableText}>No hay datos de valoración disponibles</Text>
+              </View>
+            );
+          }
+          
+          // Calcular índices para paginación
+          const indexOfLastEvent = ratingsPage * eventsPerPage;
+          const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
+          const currentEvents = eventsWithRatings.slice(indexOfFirstEvent, indexOfLastEvent);
+          
+          return (
+            <>
+              {currentEvents.map((event, index) => (
+                <View key={event.id || index} style={[styles.tableRow, index % 2 === 0 ? styles.evenRow : styles.oddRow]}>
+                  <Text 
+                    style={[styles.tableCell, { flex: 2 }]} 
+                    numberOfLines={1} 
+                    ellipsizeMode="tail"
+                  >
+                    {event.title || 'Sin título'}
+                  </Text>
+                  <Text style={[styles.tableCellRating, { flex: 1 }]}>
+                    {(event.avgscore || 0).toFixed(1)}
+                    <Text style={styles.ratingStars}> {'\u2605'}</Text>
+                  </Text>
+                </View>
+              ))}
+              
+              {/* Paginación para tabla de valoraciones */}
+              <View style={styles.tablePagination}>
+                <TouchableOpacity 
+                  style={[styles.pageButton, ratingsPage === 1 && styles.disabledPageButton]}
+                  onPress={() => ratingsPage > 1 && paginateRatings(ratingsPage - 1)}
+                  disabled={ratingsPage === 1}
+                >
+                  <Text style={styles.pageButtonText}>Anterior</Text>
+                </TouchableOpacity>
+                
+                <Text style={styles.pageInfo}>
+                  Página {ratingsPage} de {Math.ceil(eventsWithRatings.length / eventsPerPage)}
+                </Text>
+                
+                <TouchableOpacity 
+                  style={[styles.pageButton, ratingsPage >= Math.ceil(eventsWithRatings.length / eventsPerPage) && styles.disabledPageButton]}
+                  onPress={() => ratingsPage < Math.ceil(eventsWithRatings.length / eventsPerPage) && paginateRatings(ratingsPage + 1)}
+                  disabled={ratingsPage >= Math.ceil(eventsWithRatings.length / eventsPerPage)}
+                >
+                  <Text style={styles.pageButtonText}>Siguiente</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          );
+        })()}
+      </View>
+
+      {/*Comentarios de Feedback Anónimos con Paginación */}
+      <View style={styles.commentContainer}>
+        <Text style={styles.sectionTitle}>Comentarios de Feedback Anónimos</Text>
+        
+        {/* Selector de eventos para filtrar comentarios */}
+        <Text style={styles.filterLabel}>Filtrar por evento:</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.eventFilterScroll}>
+          <TouchableOpacity 
+            style={[styles.eventFilterButton, !selectedEvent && styles.selectedFilter]} 
+            onPress={() => handleSelectEvent(null)}
+          >
+            <Text style={styles.eventFilterText}>Todos</Text>
+          </TouchableOpacity>
+          {events.filter(event => event.id).map(event => (
+            <TouchableOpacity 
+              key={event.id} 
+              style={[styles.eventFilterButton, selectedEvent === event.id && styles.selectedFilter]} 
+              onPress={() => handleSelectEvent(event.id)}
+            >
+              <Text style={styles.eventFilterText}>{event.title.length > 15 ? event.title.substring(0, 12) + '...' : event.title}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+        
+        {/* Lista de comentarios */}
+        <View style={styles.commentsList}>
+          {(() => {
+            // Filtrar comentarios según el evento seleccionado
+            const filteredFeedbacks = selectedEvent 
+              ? feedbacks.filter(feedback => feedback.event_id === selectedEvent)
+              : feedbacks;
+
+            // Verificar si hay comentarios
+            if (filteredFeedbacks.length === 0) {
+              return <Text style={styles.noCommentsText}>No hay comentarios disponibles.</Text>
+            }
+
+            // Calcular paginación
+            const indexOfLastComment = currentPage * commentsPerPage;
+            const indexOfFirstComment = indexOfLastComment - commentsPerPage;
+            const currentComments = filteredFeedbacks.slice(indexOfFirstComment, indexOfLastComment);
+            
+            // Renderizar comentarios paginados
+            return (
+              <>
+                {currentComments.map((feedback, index) => {
+                  // Encontrar el evento relacionado con este feedback
+                  const eventTitle = events.find(e => e.id === feedback.event_id)?.title || 'Evento desconocido';
+                  
+                  return (
+                    <View key={index} style={styles.commentCard}>
+                      <View style={styles.commentHeader}>
+                        <Text style={styles.commentEvent}>{eventTitle}</Text>
+                        <View style={styles.ratingContainer}>
+                          {[1, 2, 3, 4, 5].map(star => (
+                            <Text key={star} style={[styles.starIcon, star <= feedback.score && styles.filledStar]}>
+                              ★
+                            </Text>
+                          ))}
+                        </View>
+                      </View>
+                      <Text style={styles.commentText}>{feedback.comment || 'Sin comentario'}</Text>
+                      <Text style={styles.commentDate}>{new Date(feedback.created_at).toLocaleDateString()}</Text>
+                    </View>
+                  );
+                })}
+                
+                {/* Paginación */}
+                <View style={styles.pagination}>
+                  <TouchableOpacity 
+                    style={[styles.pageButton, currentPage === 1 && styles.disabledPageButton]}
+                    onPress={() => currentPage > 1 && paginate(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    <Text style={styles.pageButtonText}>Anterior</Text>
+                  </TouchableOpacity>
+                  
+                  <Text style={styles.pageInfo}>
+                    Página {currentPage} de {Math.ceil(filteredFeedbacks.length / commentsPerPage)}
+                  </Text>
+                  
+                  <TouchableOpacity 
+                    style={[styles.pageButton, currentPage >= Math.ceil(filteredFeedbacks.length / commentsPerPage) && styles.disabledPageButton]}
+                    onPress={() => currentPage < Math.ceil(filteredFeedbacks.length / commentsPerPage) && paginate(currentPage + 1)}
+                    disabled={currentPage >= Math.ceil(filteredFeedbacks.length / commentsPerPage)}
+                  >
+                    <Text style={styles.pageButtonText}>Siguiente</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            );
+          })()}
+        </View>
       </View>
 
     </ScrollView>
@@ -591,15 +705,15 @@ const styles = StyleSheet.create({
   chartContainer: {
     backgroundColor: 'white',
     borderRadius: 10,
-    padding: 20, // Aumentar el padding general
-    marginBottom: 20, // Aumentar el margen inferior
+    padding: 20, 
+    marginBottom: 20,
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     fontFamily: 'Arial',
-    overflow: 'hidden' // Asegurar que el contenido no se salga
+    overflow: 'hidden' 
   },
   sectionTitle: {
     fontSize: 18,
@@ -646,7 +760,177 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     fontFamily: 'Arial'
-  }
+  },
+  tableCellNumeric: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'right',
+    fontFamily: 'Arial',
+    color: '#3498db',
+  },
+  tableCellRating: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'right',
+    fontFamily: 'Arial',
+    color: '#2ecc71',
+  },
+  scrollIndicator: {
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  scrollIndicatorText: {
+    fontSize: 12,
+    color: '#999',
+    fontStyle: 'italic',
+    fontFamily: 'Arial'
+  },
+  // Estilos para la sección de comentarios
+  commentContainer: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    fontFamily: 'Arial',
+  },
+  filterLabel: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: '#666',
+    fontFamily: 'Arial',
+  },
+  eventFilterScroll: {
+    marginBottom: 15,
+  },
+  eventFilterButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginRight: 10,
+    borderRadius: 20,
+    backgroundColor: '#f0f0f0',
+  },
+  selectedFilter: {
+    backgroundColor: '#3498db',
+  },
+  eventFilterText: {
+    fontFamily: 'Arial',
+    fontSize: 12,
+    color: '#333',
+  },
+  commentsList: {
+    marginTop: 10,
+  },
+  commentCard: {
+    backgroundColor: '#f9f9f9',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+  },
+  commentHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  commentEvent: {
+    fontWeight: 'bold',
+    fontSize: 14,
+    color: '#333',
+    fontFamily: 'Arial',
+    flex: 1,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+  },
+  starIcon: {
+    fontSize: 16,
+    color: '#ddd',
+    marginLeft: 2,
+  },
+  filledStar: {
+    color: '#f1c40f',
+  },
+  commentText: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 8,
+    fontFamily: 'Arial',
+    fontStyle: 'italic',
+  },
+  commentDate: {
+    fontSize: 12,
+    color: '#999',
+    textAlign: 'right',
+    fontFamily: 'Arial',
+  },
+  pagination: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 15,
+    paddingTop: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+  },
+  pageButton: {
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    backgroundColor: '#3498db',
+    borderRadius: 5,
+  },
+  disabledPageButton: {
+    backgroundColor: '#ccc',
+  },
+  pageButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontFamily: 'Arial',
+  },
+  pageInfo: {
+    fontSize: 14,
+    color: '#666',
+    fontFamily: 'Arial',
+  },
+  noCommentsText: {
+    fontSize: 14,
+    color: '#666',
+    fontStyle: 'italic',
+    textAlign: 'center',
+    padding: 15,
+    fontFamily: 'Arial',
+  },
+  emptyTableRow: {
+    padding: 16,
+    alignItems: 'center',
+  },
+  emptyTableText: {
+    fontSize: 14,
+    fontStyle: 'italic',
+    color: '#999',
+    fontFamily: 'Arial',
+  },
+  tablePagination: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 16,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+  },
+  
+  ratingStars: {
+    color: '#f1c40f',
+    fontWeight: 'normal',
+  },
 });
 
 export default DashboardScreen;
