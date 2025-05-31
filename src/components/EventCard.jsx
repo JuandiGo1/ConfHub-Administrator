@@ -12,7 +12,7 @@ import { getData, storeData } from "../storage/localStorage";
 import { deleteEvent } from "../services/eventService";
 import DeleteEventPop from "./DeleteEventPop";
 
-export default function EventCard({ event, onPress, onDelete }) {
+export default function EventCard({ event, onPress, onDelete, page }) {
   const date = new Date(event.datetime);
   const formattedDate = formatDate(date);
   const [canEdit, setCanEdit] = useState(false);
@@ -25,7 +25,7 @@ export default function EventCard({ event, onPress, onDelete }) {
       const email = await getData("email");
       const isAdmin = user.rol === true;
       console.log("ES ADMIN?", isAdmin);
-      setCanEdit(event.user_info === email || isAdmin);
+      setCanEdit((event.user_info === email || isAdmin) && page != "Home");
     };
     checkPermission();
   }, [event.user_info]);

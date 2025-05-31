@@ -8,18 +8,18 @@ const API_BASE_URL = "https://confhub-backend-production.up.railway.app";
 export async function getFeedbacksForEvent(eventId) {
   try {
     const response = await fetch(`${API_BASE_URL}/api/feedbacks/event/${eventId}`);
-    
+
     if (!response.ok) {
       // Handle 444 status (no feedbacks) differently
-      if (response.status === 444) {
+      if (response.status === 404) {
         return []; // Return empty array when no feedbacks exist
       }
-      
+
       const errorData = await response.json();
       console.error("Error getting feedbacks:", errorData);
       throw new Error(errorData.error || "Error getting feedbacks");
     }
-    
+
     return await response.json();
   } catch (error) {
     console.error("Network error:", error);

@@ -130,10 +130,7 @@ export default function EditAccountDataScreen({ route }) {
         visibilityTime: 2000,
       });
       // Actualizar datos del usuario
-      navigation.navigate("Main", {
-        screen: "Home",
-        params: { refresh: !refresh },
-      });
+      navigation.navigate("Main");
     } else {
       Toast.show({
         type: "error",
