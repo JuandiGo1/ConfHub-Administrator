@@ -112,20 +112,23 @@ export async function deleteEvent(eventId) {
 export async function updateEvent(eventId, eventData) {
   const token = await getData("token");
   try {
-    const response = await fetch(`${API_BASE_URL}/${eventId}`, {
-      method: "PUT",
+    const response = await fetch(`${API_BASE_URL}/api/events/${eventId}`, {
+      method: "PATCH",
       headers: {
-        "authorization": token ? `Bearer ${token}` : "",
+        "Authorization": token ? `Bearer ${token}` : "",
         "Content-Type": "application/json",
       },
       body: JSON.stringify(eventData),
     });
+
     if (!response.ok) {
       throw new Error("Error al actualizar el evento");
     }
+
     return await response.json();
   } catch (error) {
-    console.error(error);
+    console.error("Error en updateEvent:", error);
     throw error;
   }
 }
+
