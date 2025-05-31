@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Dimensions, Touc
 import { BarChart, PieChart, LineChart } from 'react-native-chart-kit';
 import axios from 'axios';
 import { Card } from 'react-native-paper';
+import formatDate from '../../utils/dateFormatter';
 
 const API_URL = 'https://confhub-backend-production.up.railway.app/api';
 
@@ -37,22 +38,22 @@ const DashboardScreen = () => {
   const [subscriptionsPage, setSubscriptionsPage] = useState(1);
   const [ratingsPage, setRatingsPage] = useState(1);
   const [eventsPerPage] = useState(5); // Eventos por página en cada tabla
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         console.log('Fetching events data from:', `${API_URL}/events`);
-        
+
         const eventsResponse = await axios.get(`${API_URL}/events`);
         console.log('Events data received:', eventsResponse.data.length, 'events');
         setEvents(eventsResponse.data);
-        
+
         console.log('Fetching feedbacks data from:', `${API_URL}/feedbacks`);
         const feedbacksResponse = await axios.get(`${API_URL}/feedbacks`);
         console.log('Feedbacks data received:', feedbacksResponse.data.length, 'feedbacks');
         setFeedbacks(feedbacksResponse.data);
-        
+
         calculateStats(eventsResponse.data, feedbacksResponse.data);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -61,15 +62,15 @@ const DashboardScreen = () => {
         setLoading(false);
       }
     };
-    
+
     fetchData();
   }, []);
-  
+
   const calculateStats = (eventsData, feedbacksData) => {
     // Inicializar contadores
     const activeEvents = eventsData.filter(event => event.status === 'Por empezar').length;
     const finishedEvents = eventsData.filter(event => event.status === 'Finalizado').length;
-    
+
     // Calcular promedio de puntuación
     let totalScore = 0;
     let reviewCount = 0;
@@ -80,7 +81,7 @@ const DashboardScreen = () => {
       }
     });
     const averageScore = reviewCount > 0 ? (totalScore / reviewCount).toFixed(1) : 0;
-    
+
     // Conteo por categorías
     const categoryCounts = {};
     eventsData.forEach(event => {
@@ -88,7 +89,7 @@ const DashboardScreen = () => {
         categoryCounts[event.category] = (categoryCounts[event.category] || 0) + 1;
       }
     });
-    
+
     // Conteo por ubicación
     const locationCounts = {};
     eventsData.forEach(event => {
@@ -96,7 +97,7 @@ const DashboardScreen = () => {
         locationCounts[event.location_] = (locationCounts[event.location_] || 0) + 1;
       }
     });
-    
+
     // Eventos por mes
     const monthlyEvents = {};
     eventsData.forEach(event => {
@@ -104,15 +105,15 @@ const DashboardScreen = () => {
       const monthYear = `${date.getMonth() + 1}/${date.getFullYear()}`;
       monthlyEvents[monthYear] = (monthlyEvents[monthYear] || 0) + 1;
     });
-    
+
     // Total de asistentes y plazas disponibles
     const totalAttendees = eventsData.reduce((sum, event) => sum + event.attendees, 0);
     const availableSpots = eventsData.reduce((sum, event) => sum + event.availablespots, 0);
-    
+
     // Tasa de ocupación (asistentes / capacidad total)
     const totalCapacity = totalAttendees + availableSpots;
     const capacityRate = totalCapacity > 0 ? ((totalAttendees / totalCapacity) * 100).toFixed(1) : 0;
-    
+
     // Distribución de puntuaciones de feedback
     const feedbackScores = [0, 0, 0, 0, 0]; // Para puntajes 1-5
     feedbacksData.forEach(feedback => {
@@ -120,7 +121,7 @@ const DashboardScreen = () => {
         feedbackScores[feedback.score - 1]++;
       }
     });
-    
+
     // Tags populares
     const tagCounts = {};
     eventsData.forEach(event => {
@@ -130,25 +131,25 @@ const DashboardScreen = () => {
         });
       }
     });
-    
+
     // Top 5 tags por popularidad
     const popularTags = Object.entries(tagCounts)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
       .map(([tag, count]) => ({ tag, count }));
-    
+
     // Top 5 ubicaciones por número de eventos
     const topLocations = Object.entries(locationCounts)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
       .map(([location, count]) => ({ location, count }));
-    
+
     // Número de eventos con track
     const topTrackEvents = eventsData.filter(event => event.track).length;
-    
+
     // Número de feedbacks respondidos
     const answeredFeedbacks = feedbacksData.filter(feedback => feedback.answer !== null).length;
-    
+
     setStats({
       totalEvents: eventsData.length,
       activeEvents,
@@ -169,18 +170,18 @@ const DashboardScreen = () => {
       answeredFeedbacks,
     });
   };
-  
-  
+
+
   // Modificar la función preparePieChartData para simplificar las etiquetas
   const preparePieChartData = () => {
     const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
     const total = Object.values(stats.categoryCounts).reduce((sum, count) => sum + count, 0);
-    
+
     return Object.entries(stats.categoryCounts).slice(0, 5).map(([category, count], index) => {
       const percentage = ((count / total) * 100).toFixed(1);
       // Abreviar título si es demasiado largo - usar solo las primeras 4 letras
       const shortCategory = category.substring(0, 4);
-      
+
       return {
         name: `${shortCategory} ${percentage}%`, // Formato más simple
         count,
@@ -196,7 +197,7 @@ const DashboardScreen = () => {
     const total = stats.totalAttendees + stats.availableSpots;
     const attendeesPercentage = ((stats.totalAttendees / total) * 100).toFixed(1);
     const spotsPercentage = ((stats.availableSpots / total) * 100).toFixed(1);
-    
+
     return [
       {
         name: `Asist: ${attendeesPercentage}%`, // Etiqueta más corta
@@ -248,7 +249,7 @@ const DashboardScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Dashboard de Eventos</Text>
-      
+
       {/* Tarjetas de estadísticas principales */}
       <View style={styles.cardsContainer}>
         <Card style={styles.card}>
@@ -257,21 +258,21 @@ const DashboardScreen = () => {
             <Text style={styles.cardValue}>{stats.totalEvents}</Text>
           </Card.Content>
         </Card>
-        
+
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.cardTitle}>Eventos Activos</Text>
             <Text style={styles.cardValue}>{stats.activeEvents}</Text>
           </Card.Content>
         </Card>
-        
+
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.cardTitle}>Eventos Finalizados</Text>
             <Text style={styles.cardValue}>{stats.finishedEvents}</Text>
           </Card.Content>
         </Card>
-        
+
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.cardTitle}>Feedbacks</Text>
@@ -285,7 +286,7 @@ const DashboardScreen = () => {
             <Text style={styles.cardValue}>{stats.topTrackEvents}</Text>
           </Card.Content>
         </Card>
-        
+
         <Card style={styles.wideCard}>
           <Card.Content>
             <Text style={styles.cardTitle}>Asistentes Totales</Text>
@@ -302,7 +303,7 @@ const DashboardScreen = () => {
             <Text style={styles.cardValue}>{stats.averageScore} / 5</Text>
           </Card.Content>
         </Card>
-        
+
         <Card style={styles.wideCard}>
           <Card.Content>
             <Text style={styles.cardTitle}>Tasa de Ocupación</Text>
@@ -310,7 +311,7 @@ const DashboardScreen = () => {
           </Card.Content>
         </Card>
       </View>
-      
+
       {/* Gráfico de categorías */}
       <View style={styles.chartContainer}>
         <Text style={styles.sectionTitle}>Eventos por Categoría</Text>
@@ -334,12 +335,12 @@ const DashboardScreen = () => {
             hasLegend={true}
             avoidFalseZero
             // Nuevas propiedades para mejorar visualización en móvil
-            legendPosition="bottom" 
+            legendPosition="bottom"
             accessible={true}
           />
         </View>
       </View>
-      
+
 
       {/* Gráfico de ocupación */}
       <View style={styles.chartContainer}>
@@ -407,13 +408,13 @@ const DashboardScreen = () => {
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Evento</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1, textAlign: 'right' }]}>Asistentes</Text>
         </View>
-        
+
         {(() => {
           // Filtrar eventos que tienen asistentes y ordenarlos
           const eventsWithSubscriptions = events
             .filter(event => event.attendees >= 0)
             .sort((a, b) => b.attendees - a.attendees);
-            
+
           // Si no hay datos
           if (eventsWithSubscriptions.length === 0) {
             return (
@@ -422,19 +423,19 @@ const DashboardScreen = () => {
               </View>
             );
           }
-          
+
           // Calcular índices para paginación
           const indexOfLastEvent = subscriptionsPage * eventsPerPage;
           const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
           const currentEvents = eventsWithSubscriptions.slice(indexOfFirstEvent, indexOfLastEvent);
-          
+
           return (
             <>
               {currentEvents.map((event, index) => (
                 <View key={event.id || index} style={[styles.tableRow, index % 2 === 0 ? styles.evenRow : styles.oddRow]}>
-                  <Text 
-                    style={[styles.tableCell, { flex: 2 }]} 
-                    numberOfLines={1} 
+                  <Text
+                    style={[styles.tableCell, { flex: 2 }]}
+                    numberOfLines={1}
                     ellipsizeMode="tail"
                   >
                     {event.title || 'Sin título'}
@@ -444,22 +445,22 @@ const DashboardScreen = () => {
                   </Text>
                 </View>
               ))}
-              
+
               {/* Paginación para tabla de suscripciones */}
               <View style={styles.tablePagination}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[styles.pageButton, subscriptionsPage === 1 && styles.disabledPageButton]}
                   onPress={() => subscriptionsPage > 1 && paginateSubscriptions(subscriptionsPage - 1)}
                   disabled={subscriptionsPage === 1}
                 >
                   <Text style={styles.pageButtonText}>Anterior</Text>
                 </TouchableOpacity>
-                
+
                 <Text style={styles.pageInfo}>
                   Página {subscriptionsPage} de {Math.ceil(eventsWithSubscriptions.length / eventsPerPage)}
                 </Text>
-                
-                <TouchableOpacity 
+
+                <TouchableOpacity
                   style={[styles.pageButton, subscriptionsPage >= Math.ceil(eventsWithSubscriptions.length / eventsPerPage) && styles.disabledPageButton]}
                   onPress={() => subscriptionsPage < Math.ceil(eventsWithSubscriptions.length / eventsPerPage) && paginateSubscriptions(subscriptionsPage + 1)}
                   disabled={subscriptionsPage >= Math.ceil(eventsWithSubscriptions.length / eventsPerPage)}
@@ -479,13 +480,13 @@ const DashboardScreen = () => {
           <Text style={[styles.tableHeaderCell, { flex: 2 }]}>Evento</Text>
           <Text style={[styles.tableHeaderCell, { flex: 1, textAlign: 'right' }]}>Valoración</Text>
         </View>
-        
+
         {(() => {
           // Filtrar eventos con puntuación y ordenarlos
           const eventsWithRatings = events
-            .filter(event => event.avgscore !== null && event.avgscore !== undefined)
+            .filter(event => event.avgscore > 0 && event.avgscore !== null && event.avgscore !== undefined)
             .sort((a, b) => b.avgscore - a.avgscore);
-            
+
           // Si no hay datos
           if (eventsWithRatings.length === 0) {
             return (
@@ -494,19 +495,19 @@ const DashboardScreen = () => {
               </View>
             );
           }
-          
+
           // Calcular índices para paginación
           const indexOfLastEvent = ratingsPage * eventsPerPage;
           const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
           const currentEvents = eventsWithRatings.slice(indexOfFirstEvent, indexOfLastEvent);
-          
+
           return (
             <>
               {currentEvents.map((event, index) => (
                 <View key={event.id || index} style={[styles.tableRow, index % 2 === 0 ? styles.evenRow : styles.oddRow]}>
-                  <Text 
-                    style={[styles.tableCell, { flex: 2 }]} 
-                    numberOfLines={1} 
+                  <Text
+                    style={[styles.tableCell, { flex: 2 }]}
+                    numberOfLines={1}
                     ellipsizeMode="tail"
                   >
                     {event.title || 'Sin título'}
@@ -517,22 +518,22 @@ const DashboardScreen = () => {
                   </Text>
                 </View>
               ))}
-              
+
               {/* Paginación para tabla de valoraciones */}
               <View style={styles.tablePagination}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[styles.pageButton, ratingsPage === 1 && styles.disabledPageButton]}
                   onPress={() => ratingsPage > 1 && paginateRatings(ratingsPage - 1)}
                   disabled={ratingsPage === 1}
                 >
                   <Text style={styles.pageButtonText}>Anterior</Text>
                 </TouchableOpacity>
-                
+
                 <Text style={styles.pageInfo}>
                   Página {ratingsPage} de {Math.ceil(eventsWithRatings.length / eventsPerPage)}
                 </Text>
-                
-                <TouchableOpacity 
+
+                <TouchableOpacity
                   style={[styles.pageButton, ratingsPage >= Math.ceil(eventsWithRatings.length / eventsPerPage) && styles.disabledPageButton]}
                   onPress={() => ratingsPage < Math.ceil(eventsWithRatings.length / eventsPerPage) && paginateRatings(ratingsPage + 1)}
                   disabled={ratingsPage >= Math.ceil(eventsWithRatings.length / eventsPerPage)}
@@ -548,33 +549,33 @@ const DashboardScreen = () => {
       {/*Comentarios de Feedback Anónimos con Paginación */}
       <View style={styles.commentContainer}>
         <Text style={styles.sectionTitle}>Comentarios de Feedback Anónimos</Text>
-        
+
         {/* Selector de eventos para filtrar comentarios */}
         <Text style={styles.filterLabel}>Filtrar por evento:</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.eventFilterScroll}>
-          <TouchableOpacity 
-            style={[styles.eventFilterButton, !selectedEvent && styles.selectedFilter]} 
+          <TouchableOpacity
+            style={[styles.eventFilterButton, !selectedEvent && styles.selectedFilter]}
             onPress={() => handleSelectEvent(null)}
           >
             <Text style={styles.eventFilterText}>Todos</Text>
           </TouchableOpacity>
-          {events.filter(event => event.id).map(event => (
-            <TouchableOpacity 
-              key={event.id} 
-              style={[styles.eventFilterButton, selectedEvent === event.id && styles.selectedFilter]} 
-              onPress={() => handleSelectEvent(event.id)}
+          {events.map(event => (
+            <TouchableOpacity
+              key={event.eventid}
+              style={[styles.eventFilterButton, selectedEvent === event.eventid && styles.selectedFilter]}
+              onPress={() => handleSelectEvent(event.eventid)}
             >
               <Text style={styles.eventFilterText}>{event.title.length > 15 ? event.title.substring(0, 12) + '...' : event.title}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
-        
+
         {/* Lista de comentarios */}
         <View style={styles.commentsList}>
           {(() => {
             // Filtrar comentarios según el evento seleccionado
-            const filteredFeedbacks = selectedEvent 
-              ? feedbacks.filter(feedback => feedback.event_id === selectedEvent)
+            const filteredFeedbacks = selectedEvent
+              ? feedbacks.filter(feedback => feedback.eventid === selectedEvent)
               : feedbacks;
 
             // Verificar si hay comentarios
@@ -586,18 +587,15 @@ const DashboardScreen = () => {
             const indexOfLastComment = currentPage * commentsPerPage;
             const indexOfFirstComment = indexOfLastComment - commentsPerPage;
             const currentComments = filteredFeedbacks.slice(indexOfFirstComment, indexOfLastComment);
-            
+
             // Renderizar comentarios paginados
             return (
               <>
                 {currentComments.map((feedback, index) => {
-                  // Encontrar el evento relacionado con este feedback
-                  const eventTitle = events.find(e => e.id === feedback.event_id)?.title || 'Evento desconocido';
-                  
                   return (
                     <View key={index} style={styles.commentCard}>
                       <View style={styles.commentHeader}>
-                        <Text style={styles.commentEvent}>{eventTitle}</Text>
+                        <Text style={styles.commentEvent}>{feedback.title}</Text>
                         <View style={styles.ratingContainer}>
                           {[1, 2, 3, 4, 5].map(star => (
                             <Text key={star} style={[styles.starIcon, star <= feedback.score && styles.filledStar]}>
@@ -607,26 +605,26 @@ const DashboardScreen = () => {
                         </View>
                       </View>
                       <Text style={styles.commentText}>{feedback.comment || 'Sin comentario'}</Text>
-                      <Text style={styles.commentDate}>{new Date(feedback.created_at).toLocaleDateString()}</Text>
+                      <Text style={styles.commentDate}>{ formatDate(new Date(feedback.dateTime))}</Text>
                     </View>
                   );
                 })}
-                
+
                 {/* Paginación */}
                 <View style={styles.pagination}>
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     style={[styles.pageButton, currentPage === 1 && styles.disabledPageButton]}
                     onPress={() => currentPage > 1 && paginate(currentPage - 1)}
                     disabled={currentPage === 1}
                   >
                     <Text style={styles.pageButtonText}>Anterior</Text>
                   </TouchableOpacity>
-                  
+
                   <Text style={styles.pageInfo}>
                     Página {currentPage} de {Math.ceil(filteredFeedbacks.length / commentsPerPage)}
                   </Text>
-                  
-                  <TouchableOpacity 
+
+                  <TouchableOpacity
                     style={[styles.pageButton, currentPage >= Math.ceil(filteredFeedbacks.length / commentsPerPage) && styles.disabledPageButton]}
                     onPress={() => currentPage < Math.ceil(filteredFeedbacks.length / commentsPerPage) && paginate(currentPage + 1)}
                     disabled={currentPage >= Math.ceil(filteredFeedbacks.length / commentsPerPage)}
@@ -705,7 +703,7 @@ const styles = StyleSheet.create({
   chartContainer: {
     backgroundColor: 'white',
     borderRadius: 10,
-    padding: 20, 
+    padding: 20,
     marginBottom: 20,
     elevation: 2,
     shadowColor: '#000',
@@ -713,7 +711,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     fontFamily: 'Arial',
-    overflow: 'hidden' 
+    overflow: 'hidden'
   },
   sectionTitle: {
     fontSize: 18,
@@ -926,7 +924,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#eee',
   },
-  
+
   ratingStars: {
     color: '#f1c40f',
     fontWeight: 'normal',
