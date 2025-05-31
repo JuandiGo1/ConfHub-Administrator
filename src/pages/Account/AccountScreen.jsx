@@ -4,10 +4,11 @@ import DeleteAccountsScreen from "./DeleteAccountsScreen";
 import EditAccountDataScreen from "./EditAccountDataScreen";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-const Tab = createMaterialTopTabNavigator();
+
 
 export default function AccountScreen({ route, navigation }) {
   const { user, refresh } = route.params;
+  const Tab = createMaterialTopTabNavigator();
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{flex:1}}>

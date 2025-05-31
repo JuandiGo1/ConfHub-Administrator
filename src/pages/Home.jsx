@@ -1,4 +1,4 @@
-import { View, Text, Image, Pressable, ScrollView } from "react-native";
+import { View, Text, Image, Pressable, ScrollView, ActivityIndicator } from "react-native";
 import {
   SafeAreaProvider,
   SafeAreaView,
@@ -11,20 +11,24 @@ import { getSpeaker } from "../services/speakerService";
 import { getData, storeData } from "../storage/localStorage";
 import { getAdmin } from "../services/adminService";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import PaginatedList from "../components/PaginatedList";
 import EventCard from "../components/EventCard";
+import DashboardScreen from "./Dashboard/DashboardScreen";
 
 export default function Home({ route }) {
   const navigation = useNavigation();
+  const Tab = createMaterialTopTabNavigator();
   const [user, setUser] = useState(null);
   const [events, setEvents] = useState([]);
   const [eventsActive, setEventsActive] = useState([]);
   const [eventsEnded, setEventsEnded] = useState([]);
   const [eventsToday, setEventsToday] = useState([]);
-  const [refresh, setRefresh] = useState(false)
+  const [refresh, setRefresh] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true)
   const insets = useSafeAreaInsets();
 
-  
   useEffect(() => {
     fetchUser();
     fetchEvents();
@@ -49,7 +53,6 @@ export default function Home({ route }) {
     await storeData("user", JSON.stringify(currentUser));
   };
 
-
   const fetchEvents = async () => {
     try {
       const response = await getEvents();
@@ -72,24 +75,21 @@ export default function Home({ route }) {
           );
         })
       );
+
     } catch (error) {
       console.error("Error fetching events:", error);
+    } finally {
+       setLoading(false);
     }
   };
 
-  const handleDelete = async (event) => {
+  const handleRefresh = async (event) => {
     await fetchEvents();
   };
-
-
-//   useEffect(() => {
-//     fetchUser();
-//   }, [route.params?.refresh]);
 
   return (
     <SafeAreaProvider style={[styles.container, { paddingTop: insets.top }]}>
       <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
           {/* Encabezado */}
           <View style={styles.header}>
             <View>
@@ -124,7 +124,7 @@ export default function Home({ route }) {
             </View>
 
             <View style={[styles.card, { backgroundColor: "#FCA5A5" }]}>
-              <Text style={styles.cardTitle}>Finalizadoss</Text>
+              <Text style={styles.cardTitle}>Finalizados</Text>
               <Text style={styles.cardValue}>{eventsEnded.length}</Text>
               <Text style={styles.cardInfo}>↓ Eventos pasados</Text>
             </View>
@@ -142,19 +142,54 @@ export default function Home({ route }) {
             </View>
           </View>
 
-          {/* Eventos */}
-          <View style={styles.eventsGrid}>
-            {events.map((event, index) => (
-              <EventCard
-                key={index}
-                event={event}
-                onPress={() => navigation.navigate("EventDetail", { event })}
-                onDelete={handleDelete}
-              />
-            ))}
-          </View>
-        </ScrollView>
+        { loading ?  <ActivityIndicator style={{ marginTop: 40 }} /> :
+
+          <Tab.Navigator
+            screenOptions={{
+              tabBarLabelStyle: { fontSize: 14 },
+              tabBarStyle: {
+                backgroundColor: "#fff",
+                height: 50, // ajusta el alto
+              },
+              tabBarIndicatorStyle: {
+                backgroundColor: "#fff",
+              },
+            }}
+          >
+            <Tab.Screen
+              name="Eventos"
+              component={AllEvents}
+              initialParams={{events, navigation, handleRefresh, refreshing, setRefreshing}}
+            />
+            <Tab.Screen name="Estadisticas" component={DashboardScreen} />
+          </Tab.Navigator>
+
+          }
+
+
       </SafeAreaView>
     </SafeAreaProvider>
+  );
+}
+
+function AllEvents({ route, navigation }) {
+  const { events } = route.params;
+  const renderEventCard = ({ item }) => (
+    <EventCard
+      page="Home"
+      key={item.eventid}
+      event={item}
+      onPress={() => navigation.navigate("EventDetail", { event:item })}
+    />
+  );
+  return (
+    <>
+      <PaginatedList
+        data={events}
+        renderItem={renderEventCard}
+        listHeight={480} // Altura fija
+        emptyMessage="No hay eventos aún"
+      />
+    </>
   );
 }
