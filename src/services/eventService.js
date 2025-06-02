@@ -105,6 +105,40 @@ export async function deleteEvent(eventId) {
     throw error;
   }
 }
+
+
+/**
+ * Actualiza un evento existente.
+ * @param {string} eventId
+ * @param {Object} eventData
+ * @returns {Promise<Object>}
+ */
+export async function updateEvent(eventId, eventData) {
+  const token = await getData("token");
+  try {
+    const response = await fetch(`${API_BASE_URL}/${eventId}`, {
+      method: "PATCH",
+      headers: {
+        "Authorization": token ? `Bearer ${token}` : "",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(eventData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Error al actualizar el evento");
+    }
+
+    return await data
+  } catch (error) {
+    console.error("Error en updateEvent:", error);
+    throw error;
+  }
+}
+
+
 /**
  * obten todos los eventos de un track
   * @param {string} name del track
@@ -123,3 +157,4 @@ export async function getEventsFromATrack(name) {
     return [];
   }
 }
+
