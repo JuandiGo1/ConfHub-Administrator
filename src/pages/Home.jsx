@@ -189,7 +189,8 @@ export default function Home({ route }) {
               <Text style={styles.cardInfo}>Eventos totales</Text>
             </View>
           </View>
-          {!isPortrait && (
+
+          {/* {!isPortrait && (
             <Pressable
               style={{
                 position: "absolute",
@@ -209,7 +210,8 @@ export default function Home({ route }) {
                 ↓
               </View>
             </Pressable>
-          )}
+          )} */}
+          
           {/* Tabs fijos abajo */}
           {loading ? (
             <ActivityIndicator style={{ marginTop: 40 }} />
