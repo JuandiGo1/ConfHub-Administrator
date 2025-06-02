@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, View, Text, TextInput, Button, TouchableOpacity, Platform, ActivityIndicator, KeyboardAvoidingView, useWindowDimensions } from "react-native";
+import {
+  ScrollView,
+  View,
+  Text,
+  TextInput,
+  Button,
+  TouchableOpacity,
+  Platform,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  useWindowDimensions,
+} from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import styles from "../styles/styles";
 import { updateEvent, getEventsById } from "../services/eventService";
@@ -20,8 +31,8 @@ export default function EditEventModal({ event, onClose }) {
   const [sessionDuration, setSessionDuration] = useState("");
   const [tags, setTags] = useState("");
   const [message, setMessage] = useState("");
-
-  // No editables
+  const [showDate, setShowDate] = useState(false);
+  const [showTime, setShowTime] = useState(false);
   const [date, setDate] = useState(new Date());
   const [availableSpots, setAvailableSpots] = useState("");
 
@@ -45,12 +56,8 @@ export default function EditEventModal({ event, onClose }) {
             : ""
         );
         setDescription(fetched.description ?? "");
-        setSpeakerName(
-          fetched.speakerName ?? fetched.speakername ?? ""
-        );
-        setSessionOrder(
-          fetched.sessionOrder ?? fetched.sessionorder ?? []
-        );
+        setSpeakerName(fetched.speakerName ?? fetched.speakername ?? "");
+        setSessionOrder(fetched.sessionOrder ?? fetched.sessionorder ?? []);
         setTags(
           fetched.tags
             ? Array.isArray(fetched.tags)
@@ -58,6 +65,7 @@ export default function EditEventModal({ event, onClose }) {
               : String(fetched.tags)
             : ""
         );
+
         setDate(
           fetched.datetime
             ? new Date(fetched.datetime)
@@ -65,6 +73,7 @@ export default function EditEventModal({ event, onClose }) {
             ? new Date(fetched.dateTime)
             : new Date()
         );
+
         setAvailableSpots(
           fetched.availableSpots ?? fetched.availablespots ?? ""
         );
@@ -89,6 +98,21 @@ export default function EditEventModal({ event, onClose }) {
     fetchEvent();
   }, [event]);
 
+  const handleDateChange = (e, selectedDate) => {
+    setShowDate(false);
+    if (selectedDate) setDate(selectedDate);
+  };
+
+  const handleTimeChange = (e, selectedTime) => {
+    setShowTime(false);
+    if (selectedTime) {
+      const newDate = new Date(date);
+      newDate.setHours(selectedTime.getHours());
+      newDate.setMinutes(selectedTime.getMinutes());
+      setDate(newDate);
+    }
+  };
+
   const handleAddSession = () => {
     if (sessionName && sessionDuration) {
       setSessionOrder([
@@ -109,11 +133,12 @@ export default function EditEventModal({ event, onClose }) {
       const avatarUrl = `https://avatar.iran.liara.run/username?username=${nameSeparator}`;
 
       const updatedEvent = {
-        ...eventData,
         title,
         category,
         location,
+        dateTime: date.toISOString(),
         attendees: Number(attendees),
+        availableSpots,
         description,
         speakerName: safeSpeakerName,
         speakerAvatar: avatarUrl,
@@ -121,7 +146,10 @@ export default function EditEventModal({ event, onClose }) {
         tags: tags ? tags.split(",").map((t) => t.trim()) : [],
       };
 
-      console.log("Evento a actualizar (payload enviado al backend):", updatedEvent);
+      console.log(
+        "Evento a actualizar (payload enviado al backend):",
+        updatedEvent
+      );
 
       await updateEvent(event.eventid, updatedEvent);
 
@@ -145,18 +173,6 @@ export default function EditEventModal({ event, onClose }) {
     );
   }
 
-  // Log para ver los valores actuales en los campos editables antes de renderizar
-  console.log("Valores actuales en campos editables:", {
-    title,
-    category,
-    location,
-    speakerName,
-    attendees,
-    description,
-    tags,
-    sessionOrder,
-  });
-
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -174,63 +190,203 @@ export default function EditEventModal({ event, onClose }) {
         showsVerticalScrollIndicator={true}
       >
         <Text style={{ fontWeight: "bold" }}>Editar Evento</Text>
-        <TextInput placeholder="Título" value={title} onChangeText={setTitle} style={styles.input} />
-        <TextInput placeholder="Categoría" value={category} onChangeText={setCategory} style={styles.input} />
-        <TextInput placeholder="Ubicación" value={location} onChangeText={setLocation} style={styles.input} />
-        <TextInput placeholder="Nombre del ponente" value={speakerName} onChangeText={setSpeakerName} style={styles.input} />
-        <TextInput placeholder="Asistentes" value={attendees} onChangeText={setAttendees} keyboardType="numeric" style={styles.input} />
-        <TextInput placeholder="Descripción" value={description} onChangeText={setDescription} style={[styles.input, { minHeight: 100, textAlignVertical: "top" }]} multiline numberOfLines={4} />
+        <Text style={{ marginBottom: 6, fontWeight: "bold" }}>
+          Nombre del evento
+        </Text>
+        <TextInput
+          placeholder="Título"
+          value={title}
+          onChangeText={setTitle}
+          style={styles.input}
+        />
+        <Text style={{ marginBottom: 6, fontWeight: "bold" }}>Categoría</Text>
+        <TextInput
+          placeholder="Categoría"
+          value={category}
+          onChangeText={setCategory}
+          style={styles.input}
+        />
+        <Text style={{ marginBottom: 6, fontWeight: "bold" }}>Ubicación</Text>
+        <TextInput
+          placeholder="Ubicación"
+          value={location}
+          onChangeText={setLocation}
+          style={styles.input}
+        />
+        <Text style={{ marginBottom: 6, fontWeight: "bold" }}>
+          Nombre del ponente
+        </Text>
+        <TextInput
+          placeholder="Nombre del ponente"
+          value={speakerName}
+          onChangeText={setSpeakerName}
+          style={styles.input}
+        />
+        <Text style={{ marginBottom: 6, fontWeight: "bold" }}>
+          Fecha y hora
+        </Text>
+        <View style={{ flexDirection: "row", gap: 10, marginBottom: 12 }}>
+          <TouchableOpacity
+            style={[styles.input, { justifyContent: "center", flex: 1 }]}
+            onPress={() => setShowDate(true)}
+          >
+            <Text>
+              {date.toLocaleDateString("es-ES", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.input, { justifyContent: "center", flex: 1 }]}
+            onPress={() => setShowTime(true)}
+          >
+            <Text>
+              {date.toLocaleTimeString("es-ES", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {showDate && (
+          <DateTimePicker
+            value={date}
+            mode="date"
+            display={Platform.OS === "ios" ? "spinner" : "default"}
+            onChange={handleDateChange}
+          />
+        )}
+        {showTime && (
+          <DateTimePicker
+            value={date}
+            mode="time"
+            is24Hour={true}
+            display={Platform.OS === "ios" ? "spinner" : "default"}
+            onChange={handleTimeChange}
+          />
+        )}
+
+        <Text style={{ marginBottom: 6, fontWeight: "bold" }}>
+          Asistentes y cupos disponibles
+        </Text>
+        <View style={{ flexDirection: "row", gap: 10, marginBottom: 12 }}>
+          <TextInput
+            placeholder="Asistentes"
+            value={attendees}
+            onChangeText={setAttendees}
+            keyboardType="numeric"
+            style={[styles.input, { flex: 1 }]}
+          />
+          <TextInput
+            placeholder="Cupos disponibles"
+            value={availableSpots}
+            onChangeText={setAvailableSpots}
+            keyboardType="numeric"
+            style={[styles.input, { flex: 1 }]}
+          />
+        </View>
+
+        <Text style={{ marginBottom: 6, fontWeight: "bold" }}>
+          Descripción del evento
+        </Text>
+        <TextInput
+          placeholder="Descripción"
+          value={description}
+          onChangeText={setDescription}
+          style={[styles.input, { minHeight: 100, textAlignVertical: "top" }]}
+          multiline
+          numberOfLines={4}
+        />
+        <Text style={{ marginTop: 10, fontWeight: "bold" }}>
+          Nombre del ponente
+        </Text>
+        <TextInput
+          placeholder="Nombre del ponente"
+          value={speakerName}
+          onChangeText={setSpeakerName}
+          style={styles.input}
+        />
+
         <Text style={{ marginTop: 10, fontWeight: "bold" }}>Sesiones</Text>
+
         <View
           style={{
-            flexDirection: isSmallScreen ? "column" : "row",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignContent: "center",
             gap: 8,
             marginBottom: 8,
-            alignItems: "stretch",
           }}
         >
           <TextInput
             placeholder="Nombre sesión"
             value={sessionName}
             onChangeText={setSessionName}
-            style={[
-              styles.input,
-              { flex: isSmallScreen ? undefined : 2, minWidth: isSmallScreen ? "100%" : 0 },
-            ]}
+            style={[styles.input, { flex: 2 }]}
           />
           <TextInput
             placeholder="Duración (min)"
             value={sessionDuration}
             onChangeText={setSessionDuration}
             keyboardType="numeric"
-            style={[
-              styles.input,
-              { flex: isSmallScreen ? undefined : 1, minWidth: isSmallScreen ? "100%" : 0 },
-            ]}
+            style={[styles.input, { flex: 1 }]}
           />
           <TouchableOpacity
             onPress={handleAddSession}
-            style={{
-              justifyContent: "center",
-              paddingHorizontal: 8,
-              marginTop: isSmallScreen ? 8 : 0,
-              alignSelf: isSmallScreen ? "stretch" : "center",
-            }}
+            style={{ justifyContent: "center", paddingHorizontal: 8 }}
           >
-            <Text style={{ color: "#2563eb", fontWeight: "bold" }}>Agregar</Text>
+            <Text style={{ color: "#2563eb", fontWeight: "bold" }}>
+              Agregar
+            </Text>
           </TouchableOpacity>
         </View>
         {sessionOrder.map((s, idx) => (
-          <Text key={idx} style={{ fontSize: 13, color: "#444" }}>
-            {s.name} - {s.duration} min
-          </Text>
+          <View
+            key={idx}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 4,
+            }}
+          >
+            <Text style={{ fontSize: 13, color: "#444", flex: 1 }}>
+              {s.name} - {s.duration} min
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                setSessionOrder(sessionOrder.filter((_, i) => i !== idx));
+              }}
+              style={{
+                marginLeft: 8,
+                paddingHorizontal: 8,
+                paddingVertical: 2,
+                backgroundColor: "#fee2e2",
+                borderRadius: 6,
+              }}
+            >
+              <Text style={{ color: "#dc2626", fontWeight: "bold" }}>
+                Eliminar
+              </Text>
+            </TouchableOpacity>
+          </View>
         ))}
-        <TextInput placeholder="Tags (separados por coma)" value={tags} onChangeText={setTags} style={styles.input} />
+        <Text style={{ marginTop: 10, fontWeight: "bold" }}>
+          Tags de interés
+        </Text>
+        <TextInput
+          placeholder="Tags (separados por coma)"
+          value={tags}
+          onChangeText={setTags}
+          style={styles.input}
+        />
 
         {/* Campos solo visualización */}
-        <Text style={{ marginTop: 10, fontWeight: "bold" }}>Información adicional del evento</Text>
+        <Text style={{ marginTop: 10, fontWeight: "bold" }}>
+          Información adicional del evento
+        </Text>
         <Text>Fecha y hora: {date.toLocaleString("es-ES")}</Text>
-        <Text>Cupos disponibles: {availableSpots}</Text>
         <Text>Estado: {eventData.status}</Text>
         <Text>Promedio de calificación: {eventData.avgScore}</Text>
         <Text>Número de reseñas: {eventData.numberReviews}</Text>
@@ -238,7 +394,9 @@ export default function EditEventModal({ event, onClose }) {
 
         <Button title="Guardar Cambios" onPress={handleSave} />
         <Button title="Cancelar" color="#888" onPress={() => onClose(false)} />
-        {message ? <Text style={{ marginTop: 10, color: "#2563eb" }}>{message}</Text> : null}
+        {message ? (
+          <Text style={{ marginTop: 10, color: "#2563eb" }}>{message}</Text>
+        ) : null}
       </ScrollView>
     </KeyboardAvoidingView>
   );
