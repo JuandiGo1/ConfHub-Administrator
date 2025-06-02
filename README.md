@@ -1,14 +1,14 @@
-# ConfHub - Administración
+# 📱 ConfHub - Administración
 
 Aplicación móvil para la gestión y administración de eventos de conferencias de la plataforma ConfHub.
 
-## Descripción General
+## 🌟 Descripción General
 
 ConfHub Administrator es una aplicación diseñada para organizadores de eventos y ponentes, permitiéndoles gestionar conferencias, tracks, sesiones y visualizar estadísticas de participación y feedback.
 
-## Funcionalidades Principales
+## 🚀 Funcionalidades Principales
 
-### Gestión de Eventos
+### 📅 Gestión de Eventos
 
 - **Visualización de Eventos**: Lista completa de eventos con opciones de filtrado
 - **Creación de Eventos**: Formularios intuitivos para crear nuevos eventos con:
@@ -25,14 +25,14 @@ ConfHub Administrator es una aplicación diseñada para organizadores de eventos
 - **Detalle de Eventos**: Vista detallada con toda la información del evento
 - **Mis Eventos**: Sección personalizada para ver los eventos asignados al usuario actual
 
-### Gestión de Tracks
+### 🔄 Gestión de Tracks
 
 - **Listado de Tracks**: Visualización de todos los tracks disponibles
 - **Creación de Tracks**: Registro de nuevos tracks con nombre y descripción
 - **Edición de Tracks**: Modificación de tracks existentes
 - **Eliminación de Tracks**: Opción para eliminar tracks no utilizados
 
-### Dashboard de Estadísticas
+### 📊 Dashboard de Estadísticas
 
 - **Métricas Generales**:
   - Total de eventos
@@ -52,20 +52,20 @@ ConfHub Administrator es una aplicación diseñada para organizadores de eventos
   - Puntuación media por evento
   - Comentarios de feedback anónimos
 
-### Gestión de Usuarios
+### 👥 Gestión de Usuarios
 
 - **Creación de Cuentas**: Registro de nuevos administradores y ponentes
 - **Edición de Perfiles**: Modificación de datos personales
 - **Eliminación de Cuentas**: Gestión de usuarios registrados
 - **Control de Acceso**: Diferentes permisos según el tipo de usuario
 
-### Sistema de Feedback
+### 💬 Sistema de Feedback
 
 - **Visualización de Comentarios**: Revisión de feedback de los asistentes
 - **Filtrado por Evento**: Selección específica de comentarios por evento
 - **Paginación**: Navegación eficiente por grandes volúmenes de feedback
 
-## Características Técnicas
+## 🛠️ Características Técnicas
 
 - **Interfaz Responsiva**: Adaptación a diferentes tamaños de pantalla
 - **Navegación Intuitiva**: Sistema de pestañas y navegación jerárquica
@@ -73,19 +73,19 @@ ConfHub Administrator es una aplicación diseñada para organizadores de eventos
 - **Validación de Datos**: Control de errores en formularios
 - **Integración con API**: Conexión con backend para persistencia de datos
 
-## Tecnologías Utilizadas
+## 💻 Tecnologías Utilizadas
 
-- React Native
-- React Navigation
+- ⚛️ React Native
+- 🧭 React Navigation
 - Axios para peticiones HTTP
 - Chart Kit para visualizaciones
 - React Native Paper para componentes UI
 
-## Autores
+## 👨‍💻 Autores
 
-- [@JuandiGo1](https://github.com/JuandiGo1)
-- [@G-dark](https://github.com/G-dark)
-- [@lunajulio](https://github.com/lunajulio)
-- [@GermanCentanaro](https://github.com/GermanCentanaro)
+- [@JuandiGo1](https://github.com/JuandiGo1) 🚀
+- [@G-dark](https://github.com/G-dark) 🌙
+- [@lunajulio](https://github.com/lunajulio) 🌟
+- [@GermanCentanaro](https://github.com/GermanCentanaro) 🔥
 
 
