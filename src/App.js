@@ -5,12 +5,13 @@ import Home from "./pages/Home";
 import EventsScreen from "./pages/Event/EventsScreen";
 import CreateEvent from "./pages/Event/CreateEvent";
 import EventDetailPage from "./pages/Event/EventDetail";
-import TrackListingPage from "./pages/Track/TrackListing";
+import TrackListingPage from "./pages/Track/TrackListingPage";
 import { Ionicons } from "@expo/vector-icons";
 import LoginScreen from "./pages/LoginScreen";
 import CreateAccountScreen from "./pages/Account/CreateAccountScreen";
 import Toast from "react-native-toast-message";
 import AccountScreen from "./pages/Account/AccountScreen";
+import DashboardScreen from "./pages/Dashboard/DashboardScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -44,7 +45,7 @@ export default function App() {
           <Stack.Screen
             name="Tracks"
             component={TrackListingPage}
-            options={{ headerShown: true}}
+            options={{ headerShown: true }}
           />
 
           <Stack.Screen
@@ -78,6 +79,9 @@ function MainTabs() {
             case "Tracks":
               iconName = "albums-outline";
               break;
+            case "Dashboard":
+              iconName = "stats-chart";
+              break;
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -108,11 +112,26 @@ function MainTabs() {
       />
       <Tab.Screen name="Eventos" component={EventsScreen} />
       <Tab.Screen
+        name="Dashboard"
+        component={DashboardScreen}
+        options={{
+          title: "Estadísticas",
+          headerStyle: {
+            backgroundColor: "#f2f2f2",
+          },
+          headerTintColor: "#333",
+          headerTitleStyle: {
+            fontWeight: "bold",
+            fontSize: 20,
+          },
+          headerTitleAlign: "center",
+        }}
+      />
+      <Tab.Screen
         name="Tracks"
         component={TrackListingPage}
         options={{ tabBarLabel: "Tracks" }}
       />
-
     </Tab.Navigator>
   );
 }

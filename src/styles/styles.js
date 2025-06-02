@@ -1,18 +1,20 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-   modalBackground: {
+  modalBackground: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)', // semitransparente
-    justifyContent: 'center', // <-- Aquí cambias la posición: 'flex-start', 'center', 'flex-end'
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.5)", // semitransparente
+    justifyContent: "center", // <-- Aquí cambias la posición: 'flex-start', 'center', 'flex-end'
+    alignItems: "center",
   },
   modalContainer: {
-    marginTop: 100, // puedes ajustar el desplazamiento desde arriba
-    width: 300,
-    padding: 20,
-    backgroundColor: 'white',
+    width: "90%", // Ocupa el 90% del ancho de pantalla
+    maxWidth: 400, // No más ancho que 400
+    backgroundColor: "white",
     borderRadius: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 25, // Más espacio lateral
+    alignSelf: "center",
   },
   button: {
     borderRadius: 20,
@@ -86,18 +88,31 @@ const styles = StyleSheet.create({
     color: "#444",
   },
   fab: {
-    position: "absolute",
-    margin: 16,
-    right: 170,
-    bottom: 0,
-    backgroundColor:"red"
+    backgroundColor: "red",
+    marginBottom: 30,
+    marginRight: 20,
   },
   fab2: {
+    backgroundColor: "purple",
+    marginBottom: 30,
+  },
+  fab3: {
     position: "absolute",
-    margin: 16,
-    right: 40,
-    bottom: 0,
-  },     
+    bottom: 30, // un poco de espacio respecto al borde inferior
+    left: "50%",
+    transform: [{ translateX: -28 }], // si el botón tiene 56px de ancho
+    backgroundColor: "white",
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5, // sombra en Android
+    shadowColor: "#000", // sombra en iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3.84,
+  },
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
@@ -107,7 +122,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "#333",
     backgroundColor: "#fafafa",
-
   },
 });
 

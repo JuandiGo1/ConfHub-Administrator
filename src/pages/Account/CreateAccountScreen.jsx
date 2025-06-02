@@ -1,12 +1,19 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, Platform, TouchableOpacity, Image, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  Platform,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+} from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 import { makeSpeaker } from "../../services/speakerService";
 import * as ImagePicker from "expo-image-picker";
-
-
 
 export default function CreateAccountScreen({ navigation }) {
   const [name, setName] = useState("");
@@ -183,19 +190,25 @@ export default function CreateAccountScreen({ navigation }) {
             {image ? "Cambia la imagen" : "Selecciona una imagen"}
           </Text>
         </TouchableOpacity>
-        <View style={{ flexDirection: "column" }}>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text>Nombre:</Text>
+        <View style={{ flexDirection: "column", width: "100%", padding: 10 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              width: "100%",
+              marginBottom: nameError ? 0 : 20,
+            }}
+          >
+            <Text style={{ minWidth: 100, flexShrink: 1 }}>Nombre:</Text>
             <TextInput
               placeholder="Ingresa tu nombre"
               value={name}
               onChangeText={setName}
               style={{
+                flex: 1,
                 borderWidth: 1,
                 padding: 10,
-                marginLeft: 37,
-                marginVertical: 10,
-                width: "100%",
+                borderRadius:10,
                 borderColor: nameError ? "red" : "#ccc",
               }}
             />
@@ -205,26 +218,32 @@ export default function CreateAccountScreen({ navigation }) {
               style={{
                 display: "flex",
                 fontSize: 10,
-                justifyContent: "center",
-                marginLeft: "70px",
+                marginLeft: 100,
                 color: "red",
+                marginBottom: 20,
               }}
             >
               {nameError}
             </Text>
           ) : null}
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text>Apellido:</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              width: "100%",
+              marginBottom: lastNameError ? 0 : 20,
+            }}
+          >
+            <Text style={{ minWidth: 100, flexShrink: 1 }}>Apellido:</Text>
             <TextInput
               placeholder="Ingresa tu apellido"
               value={lastName}
               onChangeText={setLastName}
               style={{
+                flex: 1,
                 borderWidth: 1,
                 padding: 10,
-                marginLeft: 37,
-                marginVertical: 10,
-                width: "100%",
+                borderRadius:10,
                 borderColor: lastNameError ? "red" : "#ccc",
               }}
             />
@@ -234,16 +253,23 @@ export default function CreateAccountScreen({ navigation }) {
               style={{
                 display: "flex",
                 fontSize: 10,
-                justifyContent: "center",
-                marginLeft: "72px",
+                marginLeft: 100,
                 color: "red",
+                marginBottom: 20,
               }}
             >
               {lastNameError}
             </Text>
           ) : null}
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text>Correo:</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              width: "100%",
+              marginBottom: emailError ? 0 : 20,
+            }}
+          >
+            <Text style={{ minWidth: 100, flexShrink: 1 }}>Correo:</Text>
 
             <TextInput
               placeholder="Ingresa tu correo"
@@ -251,11 +277,10 @@ export default function CreateAccountScreen({ navigation }) {
               value={email}
               onChangeText={setEmail}
               style={{
+                flex: 1,
                 borderWidth: 1,
                 padding: 10,
-                marginLeft: 47,
-                marginVertical: 10,
-                width: "100%",
+                borderRadius:10,
                 borderColor: emailError ? "red" : "#ccc",
               }}
             />
@@ -266,9 +291,9 @@ export default function CreateAccountScreen({ navigation }) {
               style={{
                 fontSize: 10,
                 display: "flex",
-                marginRight: "27px",
-                justifyContent: "center",
+                marginLeft: 100,
                 color: "red",
+                marginBottom: 20,
               }}
             >
               {emailError}
@@ -279,20 +304,21 @@ export default function CreateAccountScreen({ navigation }) {
             style={{
               flexDirection: "row",
               alignItems: "center",
+              width: "100%",
+              marginBottom: passwordError ? 0 : 20,
             }}
           >
-            <Text>Contraseña:</Text>
+            <Text style={{ minWidth: 100, flexShrink: 1 }}>Contraseña:</Text>
             <TextInput
               placeholder="Ingresa tu contraseña"
               value={password}
               onChangeText={setPassword}
               secureTextEntry
               style={{
+                flex: 1,
                 borderWidth: 1,
+                borderRadius:10,
                 padding: 10,
-                marginLeft: 19,
-                marginVertical: 10,
-                width: "100%",
                 borderColor: passwordError ? "red" : "#ccc",
               }}
             />
@@ -302,8 +328,9 @@ export default function CreateAccountScreen({ navigation }) {
               style={{
                 display: "flex",
                 fontSize: 10,
-                justifyContent: "center",
+                marginLeft: 100,
                 color: "red",
+                marginBottom: 20,
               }}
             >
               {passwordError}
@@ -314,19 +341,23 @@ export default function CreateAccountScreen({ navigation }) {
             style={{
               flexDirection: "row",
               alignItems: "center",
+              width: "100%",
+              marginBottom: validatePasswordError ? 0 : 20,
             }}
           >
-            <Text>Confirmar contraseña:</Text>
+            <Text style={{ minWidth: 100, flexShrink: 1 }}>
+              Confirmar contraseña:
+            </Text>
             <TextInput
               placeholder="Repite tu contraseña"
               value={validatepassword}
               onChangeText={setValidatePassword}
               secureTextEntry
               style={{
+                flex: 1,
                 borderWidth: 1,
                 padding: 10,
-                marginVertical: 10,
-                width: "100%",
+                borderRadius:10,
                 borderColor: validatePasswordError ? "red" : "#ccc",
               }}
             />
@@ -336,9 +367,9 @@ export default function CreateAccountScreen({ navigation }) {
               style={{
                 display: "flex",
                 fontSize: 10,
-                justifyContent: "center",
-                marginLeft: "20px",
+                marginLeft: 140,
                 color: "red",
+                marginBottom: 20,
               }}
             >
               {validatePasswordError}

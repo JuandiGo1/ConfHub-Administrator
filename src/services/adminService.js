@@ -1,9 +1,8 @@
-
 import { getData, storeData } from "../storage/localStorage";
-const API_BASE_URL = "https://confhub-backend-production.up.railway.app/api/admins";
+const API_BASE_URL =
+  "https://confhub-backend-production.up.railway.app/api/admins";
 
-
-/*
+/**
  * Loguea un administrador
  * @param {Object} admin correo y contraseña.
  * @returns {Promise<boolean>} .
@@ -20,7 +19,8 @@ export async function loginAdmin(email, password) {
     });
 
     if (!response.ok) {
-      throw new Error("Error al iniciar sesión");
+      console.log(`Login admin fallido: ${response.status}`);
+      return false;
     }
 
     const data = await response.json();
@@ -29,7 +29,6 @@ export async function loginAdmin(email, password) {
       await storeData("email", email);
     }
 
-
     return true;
   } catch (error) {
     console.error("Error:", error);
@@ -37,7 +36,7 @@ export async function loginAdmin(email, password) {
   }
 }
 
-/*
+/**
  * Registra un administrador
  * @param {Object} datos del admin.
  * @returns {Promise<boolean>} un booleano verdaro si lo creo falso si no.
@@ -50,11 +49,12 @@ export async function makeAdmin(admin) {
       headers: {
         authorization: `Bearer ${await getData("token")}`,
       },
-      body: admin
+      body: admin,
     });
 
     if (!response.ok) {
-      throw new Error("Error al registrarse");
+      console.log(`Register admin fallido: ${response.status}`);
+      return false;
     }
     return true;
   } catch (error) {
@@ -63,9 +63,9 @@ export async function makeAdmin(admin) {
   }
 }
 
-/*
+/**
  * Elimina un administrador
- * @param {string} correo del admin.
+ * @param {string} email del admin.
  * @returns {Promise<boolean>} un booleano verdaro si lo creo falso si no.
  */
 
@@ -80,7 +80,8 @@ export async function deleteAdmin(email) {
     });
 
     if (!response.ok) {
-      throw new Error("Error al eliminar administrador");
+      console.log(`Delete admin fallido: ${response.status}`);
+      return false;
     }
     return true;
   } catch (error) {
@@ -89,9 +90,10 @@ export async function deleteAdmin(email) {
   }
 }
 
-/*
+/**
  * Edita un administrador
- * @param {string} correo del admin.
+ * @param {string} email del admin.
+ * @param {Object} admin datos del admin.
  * @returns {Promise<boolean>} un booleano verdaro si lo creo falso si no.
  */
 
@@ -102,11 +104,12 @@ export async function updateAdmin(email, admin) {
       headers: {
         authorization: `Bearer ${await getData("token")}`,
       },
-      body: admin
+      body: admin,
     });
 
     if (!response.ok) {
-      throw new Error("Error al actualizar administrador");
+      console.log(`Update admin fallido: ${response.status}`);
+      return false;
     }
     return true;
   } catch (error) {
@@ -115,15 +118,14 @@ export async function updateAdmin(email, admin) {
   }
 }
 
-/*
+/**
  * obten un administrador
  * @param {string} email del admin.
  * @returns {Promise<Object>} datos del admin.
  */
 
-
 export async function getAdmin(email) {
-   try {
+  try {
     const response = await fetch(`${API_BASE_URL}/${email}`, {
       headers: {
         authorization: `Bearer ${await getData("token")}`,
@@ -132,9 +134,9 @@ export async function getAdmin(email) {
 
     const data = await response.json();
 
-
     if (!response.ok) {
-      throw new Error("Error al obtener el administrador");
+      console.log(`Get admin fallido: ${response.status}`);
+      return null;
     }
     return data;
   } catch (error) {

@@ -63,8 +63,6 @@ export async function searchEvents(query) {
  */
 export async function createEvent(event) {
   const token = await getData("token");
-  console.log("Token:", token); // Debugging line to check token value
-  console.log("Event data:", event); // Debugging line to check event data
   try {
     const response = await fetch(API_BASE_URL, {
       method: "POST",
@@ -88,11 +86,16 @@ export async function createEvent(event) {
  * Elimina un evento por su ID.
  * @param {string} eventId ID del evento a eliminar.
  * @returns {Promise<void>}
- */
+ */ 
 export async function deleteEvent(eventId) {
+  const token = await getData("token");
   try {
     const response = await fetch(`${API_BASE_URL}/${eventId}`, {
       method: "DELETE",
+      headers: {
+        "authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     });
     if (!response.ok) {
       throw new Error("Error al eliminar el evento");
@@ -102,6 +105,7 @@ export async function deleteEvent(eventId) {
     throw error;
   }
 }
+
 
 /**
  * Actualiza un evento existente.
@@ -131,6 +135,26 @@ export async function updateEvent(eventId, eventData) {
   } catch (error) {
     console.error("Error en updateEvent:", error);
     throw error;
+  }
+}
+
+
+/**
+ * obten todos los eventos de un track
+  * @param {string} name del track
+ * @returns {Promise<Object>} eventos del track.
+ */
+export async function getEventsFromATrack(name) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/track/${name}`);
+    if (!response.ok) {
+      console.error("Error al obtener los eventos del track");
+      throw new Error("Error al obtener los eventos");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    return [];
   }
 }
 

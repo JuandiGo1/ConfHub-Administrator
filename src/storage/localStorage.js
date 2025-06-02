@@ -20,3 +20,14 @@ export const getData = async (key) => {
     console.error('Error al leer de AsyncStorage:', e);
   }
 };
+
+export const removeData = async (key) => {
+  try {
+    const value = await AsyncStorage.removeItem(key);
+    if (value !== null) {
+      return value;
+    }
+  } catch (e) {
+    console.error('Error al eliminar de AsyncStorage:', e);
+  }
+};
