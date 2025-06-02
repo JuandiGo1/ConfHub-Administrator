@@ -12,6 +12,8 @@ import {
   useWindowDimensions,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { Picker } from "@react-native-picker/picker";
+import { getTracks } from "../services/trackService";
 import styles from "../styles/styles";
 import { updateEvent, getEventsById } from "../services/eventService";
 
@@ -35,6 +37,21 @@ export default function EditEventModal({ event, onClose }) {
   const [showTime, setShowTime] = useState(false);
   const [date, setDate] = useState(new Date());
   const [availableSpots, setAvailableSpots] = useState("");
+  const [tracks, setTracks] = useState([]);
+  const [selectedTrack, setSelectedTrack] = useState("None");
+
+  useEffect(() => {
+    const fetchTracks = async () => {
+      try {
+        const data = await getTracks();
+        setTracks(data);
+      } catch (error) {
+        console.error("Error fetching tracks:", error);
+        setTracks([]);
+      }
+    };
+    fetchTracks();
+  }, []);
 
   // Fetch evento actualizado al abrir modal
   useEffect(() => {
@@ -77,6 +94,11 @@ export default function EditEventModal({ event, onClose }) {
         setAvailableSpots(
           fetched.availableSpots ?? fetched.availablespots ?? ""
         );
+
+        setSelectedTrack(
+          fetched.track && fetched.track !== "" ? fetched.track : "none"
+        );
+
         console.log("Campos inicializados en el modal:", {
           title: fetched.title,
           category: fetched.category,
@@ -143,6 +165,7 @@ export default function EditEventModal({ event, onClose }) {
         speakerName: safeSpeakerName,
         speakerAvatar: avatarUrl,
         sessionOrder,
+        track: selectedTrack !== "None" ? selectedTrack : null,
         tags: tags ? tags.split(",").map((t) => t.trim()) : [],
       };
 
@@ -264,6 +287,24 @@ export default function EditEventModal({ event, onClose }) {
             onChange={handleTimeChange}
           />
         )}
+
+        <Text style={{ marginBottom: 6, fontWeight: "bold" }}>Track</Text>
+        <View style={[styles.input, { padding: 0, marginBottom: 12 }]}>
+          <Picker
+            selectedValue={selectedTrack}
+            onValueChange={(itemValue) => setSelectedTrack(itemValue)}
+            style={{ height: 60, width: "100%" }}
+          >
+            <Picker.Item label="Ninguno" value="none" />
+            {tracks.map((track) => (
+              <Picker.Item
+                key={track.name}
+                label={track.name}
+                value={track.name}
+              />
+            ))}
+          </Picker>
+        </View>
 
         <Text style={{ marginBottom: 6, fontWeight: "bold" }}>
           Asistentes y cupos disponibles
@@ -389,12 +430,15 @@ export default function EditEventModal({ event, onClose }) {
         <Text>Número de reseñas: {eventData.numberReviews}</Text>
         <Text>ID: {eventData.eventid}</Text>
 
-        <View style={{ gap: 5, fontWeight: "bold", display: "flex", flexDirection: "column" }}>
-          <Button
-            title="Guardar Cambios"
-            onPress={handleSave}
-            
-          />
+        <View
+          style={{
+            gap: 5,
+            fontWeight: "bold",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Button title="Guardar Cambios" onPress={handleSave} />
           <Button
             title="Cancelar"
             color="#888"

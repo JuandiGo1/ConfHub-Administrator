@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,8 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import styles from "../../styles/styles";
 import { createEvent } from "../../services/eventService";
+import { Picker } from "@react-native-picker/picker";
+import { getTracks } from "../../services/trackService";
 import {
   isNotEmpty,
   isOnlyText,
@@ -33,6 +35,22 @@ export default function CreateEvent() {
   const [date, setDate] = useState(new Date());
   const [showDate, setShowDate] = useState(false);
   const [showTime, setShowTime] = useState(false);
+  const [tracks, setTracks] = useState([]);
+  const [selectedTrack, setSelectedTrack] = useState("None");
+
+  // Obtener tracks al montar
+  useEffect(() => {
+    const fetchTracks = async () => {
+      try {
+        const data = await getTracks();
+        setTracks(data);
+      } catch (error) {
+        console.error("Error fetching tracks:", error);
+        setTracks([]);
+      }
+    };
+    fetchTracks();
+  }, []);
 
   const handleDateChange = (event, selectedDate) => {
     setShowDate(false);
@@ -128,6 +146,7 @@ export default function CreateEvent() {
         tags: tags.split(",").map((t) => t.trim()),
         avgScore: 0,
         numberReviews: 0,
+        track: selectedTrack !== "None" ? selectedTrack : null,
         status: "Por empezar",
       };
       await createEvent(event);
@@ -146,6 +165,7 @@ export default function CreateEvent() {
       setDate(new Date());
       setShowDate(false);
       setShowTime(false);
+      setSelectedTrack("None");
     } catch (error) {
       setMessage("Error al crear el evento", error.message);
     }
@@ -231,6 +251,24 @@ export default function CreateEvent() {
           onChange={handleTimeChange}
         />
       )}
+
+      <Text style={{ marginBottom: 6, fontWeight: "bold" }}>Track</Text>
+      <View style={[styles.input, { padding: 0, marginBottom: 12 }]}>
+        <Picker
+          selectedValue={selectedTrack}
+          onValueChange={(itemValue) => setSelectedTrack(itemValue)}
+          style={{ height: 60, width: "100%" }}
+        >
+          <Picker.Item label="Ninguno" value="none" />
+          {tracks.map((track) => (
+            <Picker.Item
+              key={track.name}
+              label={track.name}
+              value={track.name}
+            />
+          ))}
+        </Picker>
+      </View>
 
       <Text style={{ marginBottom: 6, fontWeight: "bold" }}>
         Asistentes y cupos disponibles
