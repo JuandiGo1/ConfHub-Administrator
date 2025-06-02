@@ -12,7 +12,7 @@ import { getData, storeData } from "../storage/localStorage";
 import { deleteEvent } from "../services/eventService";
 import DeleteEventPop from "./DeleteEventPop";
 
-export default function EventCard({ event, onPress, onDelete, page }) {
+export default function EventCard({ event, onPress, onDelete, onEdit, page }) {
   const date = new Date(event.datetime);
   const formattedDate = formatDate(date);
   const [canEdit, setCanEdit] = useState(false);
@@ -25,7 +25,7 @@ export default function EventCard({ event, onPress, onDelete, page }) {
       const email = await getData("email");
       const isAdmin = user.rol === true;
       console.log("ES ADMIN?", isAdmin);
-      setCanEdit((event.user_info === email || isAdmin) && page != "Home");
+      setCanEdit((event.user_info === email || isAdmin) );
     };
     checkPermission();
   }, [event.user_info]);
@@ -57,7 +57,7 @@ export default function EventCard({ event, onPress, onDelete, page }) {
         {canEdit && (
           <View style={styles.actions}>
             <TouchableOpacity
-              onPress={() => console.log("Edit event")}
+              onPress={() => onEdit(event)}
               style={styles.actionBtn}
             >
               <Text style={styles.actionText}>Editar</Text>

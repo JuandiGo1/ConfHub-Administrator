@@ -86,14 +86,7 @@ export default function MyEvents() {
           data={events}
           renderItem={({ item }) => (
             <View>
-              <EventCard event={item} />
-              <IconButton
-                icon="pencil"
-                iconColor={MD3Colors.primary50}
-                size={24}
-                onPress={() => handleEdit(item)}
-                style={{ alignSelf: "flex-end" }}
-              />
+              <EventCard event={item} onEdit={handleEdit}/>
             </View>
           )}
           keyExtractor={(item) => item.eventid}

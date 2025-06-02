@@ -70,8 +70,8 @@ export default function EditEventModal({ event, onClose }) {
           fetched.datetime
             ? new Date(fetched.datetime)
             : fetched.dateTime
-            ? new Date(fetched.dateTime)
-            : new Date()
+              ? new Date(fetched.dateTime)
+              : new Date()
         );
 
         setAvailableSpots(
@@ -160,9 +160,6 @@ export default function EditEventModal({ event, onClose }) {
       setMessage("Error al actualizar el evento");
     }
   };
-
-  const { width } = useWindowDimensions();
-  const isSmallScreen = width < 500;
 
   if (loading || !eventData) {
     return (
@@ -392,8 +389,18 @@ export default function EditEventModal({ event, onClose }) {
         <Text>Número de reseñas: {eventData.numberReviews}</Text>
         <Text>ID: {eventData.eventid}</Text>
 
-        <Button title="Guardar Cambios" onPress={handleSave} />
-        <Button title="Cancelar" color="#888" onPress={() => onClose(false)} />
+        <View style={{ gap: 5, fontWeight: "bold", display: "flex", flexDirection: "column" }}>
+          <Button
+            title="Guardar Cambios"
+            onPress={handleSave}
+            
+          />
+          <Button
+            title="Cancelar"
+            color="#888"
+            onPress={() => onClose(false)}
+          />
+        </View>
         {message ? (
           <Text style={{ marginTop: 10, color: "#2563eb" }}>{message}</Text>
         ) : null}
