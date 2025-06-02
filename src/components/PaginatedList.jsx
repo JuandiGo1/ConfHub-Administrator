@@ -16,9 +16,9 @@ const PaginatedList = ({
   emptyMessage = "No hay elementos para mostrar",
   handleRefresh,
   refreshing,
+  flatListRef,
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
-  const flatListRef = useRef(null);
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const startIdx = currentPage * itemsPerPage;
   const endIdx = startIdx + itemsPerPage;
@@ -47,6 +47,7 @@ const PaginatedList = ({
       ) : (
         <>
           <FlatList
+            style={{ flex: 1 }}
             ref={flatListRef}
             data={currentItems}
             renderItem={renderItem}
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   listContent: {
-    paddingBottom: 10,
+    paddingBottom: 50,
   },
   paginationControls: {
     flexDirection: "row",
