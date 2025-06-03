@@ -85,6 +85,11 @@ ConfHub Administrator es una aplicación diseñada para organizadores de eventos
 - Chart Kit para visualizaciones
 - React Native Paper para componentes UI
 
+## 📂 Repositorios
+
+- Flutter App: https://github.com/JuandiGo1/Confhub
+- API REST: https://github.com/G-dark/Confhub-Backend
+
 ## 👨‍💻 Autores
 
 - [Juan Maestre](https://github.com/JuandiGo1) 🚀
@@ -93,6 +98,6 @@ ConfHub Administrator es una aplicación diseñada para organizadores de eventos
 - [German Centenaro](https://github.com/GermanCentanaro) 🔥
 - [Edinson Noriega](https://github.com/Almor21) 🌟
 - [Shaddia Acuña](https://github.com/shaddia) ❤️‍🩹​
-- [Eelipe Benitez](https://github.com/Almor21) 🌟
+- [Felipe Benitez](https://github.com/jfbenitezz) 🌟
 
 
