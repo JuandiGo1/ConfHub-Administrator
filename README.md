@@ -8,6 +8,7 @@ ConfHub Administrator es una aplicación diseñada para organizadores de eventos
 
 ## 🎥 Vídeos
 -**Presentación de nuestra app**: https://www.youtube.com/watch?v=4EopXYYO3Rw
+-**Explicación de como se actualiza la version de la API**: https://www.youtube.com/watch?v=NO4XUEIfSZA
 
 ## 🚀 Funcionalidades Principales
 
