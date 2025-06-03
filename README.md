@@ -7,8 +7,8 @@ Aplicación móvil para la gestión y administración de eventos de conferencias
 ConfHub Administrator es una aplicación diseñada para organizadores de eventos y ponentes, permitiéndoles gestionar conferencias, tracks, sesiones y visualizar estadísticas de participación y feedback.
 
 ## 🎥 Vídeos
--**Presentación de nuestra app**: https://www.youtube.com/watch?v=4EopXYYO3Rw
--**Explicación de como se actualiza la version de la API**: https://www.youtube.com/watch?v=NO4XUEIfSZA
+- **Presentación de nuestra app**: https://www.youtube.com/watch?v=4EopXYYO3Rw
+- **Explicación de como se actualiza la version de la API**: https://www.youtube.com/watch?v=NO4XUEIfSZA
 
 ## 🚀 Funcionalidades Principales
 
