@@ -123,7 +123,7 @@ export default function Home({ route }) {
 
   const scrollTo = () => {
     console.log("scrolleado");
-    console.log(flatListRef.current)
+    console.log(flatListRef.current);
     flatListRef.current?.scrollToEnd({ offset: 1000, animated: true });
   };
 
@@ -211,7 +211,7 @@ export default function Home({ route }) {
               </View>
             </Pressable>
           )} */}
-          
+
           {/* Tabs fijos abajo */}
           {loading ? (
             <ActivityIndicator style={{ marginTop: 40 }} />
@@ -224,9 +224,8 @@ export default function Home({ route }) {
                   tabBarIndicatorStyle: { backgroundColor: "#6C63FF" },
                 }}
               >
-                <Tab.Screen
-                  name="Eventos"
-                  children={() => (
+                <Tab.Screen name="Eventos">
+                  {() => (
                     <AllEvents
                       flatListRef={flatListRef}
                       events={events}
@@ -239,7 +238,7 @@ export default function Home({ route }) {
                       }
                     />
                   )}
-                />
+                </Tab.Screen>
                 <Tab.Screen name="Estadísticas" component={DashboardScreen} />
               </Tab.Navigator>
             </View>

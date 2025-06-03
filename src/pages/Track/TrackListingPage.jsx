@@ -8,11 +8,10 @@ import {
   TextInput,
   Pressable,
 } from "react-native";
-import { getTracks, updateTrack } from "../../services/trackService";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { FAB } from "react-native-paper";
 import styles from "../../styles/styles";
-import { makeTrack, deleteTrack } from "../../services/trackService";
+import { makeTrack, deleteTrack, getTracks, updateTrack } from "../../services/trackService";
 import Toast from "react-native-toast-message";
 import TrackListing from "../../components/TrackListing";
 import { getData } from "../../storage/localStorage";

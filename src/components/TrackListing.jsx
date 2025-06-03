@@ -41,7 +41,8 @@ const TrackListing = ({ tracks, onEdit, onDelete, setRefresh }) => {
     const events = trackEvents[track.name] || [];
 
     // Calculate total attendees
-    const totalAttendees = events.reduce(
+    const validEvents = events.filter((e) => e != null);
+    const totalAttendees = validEvents.reduce(
       (sum, event) => sum + (event.attendees || 0),
       0
     );
@@ -63,8 +64,8 @@ const TrackListing = ({ tracks, onEdit, onDelete, setRefresh }) => {
         description={track.description}
         extraInfo={extraInfo}
       >
-        {events.length > 0 ? (
-          events.map((event) => (
+        {validEvents.length > 0 ? (
+          validEvents.map((event) => (
             <EventCard
               key={event.eventid}
               event={event}
