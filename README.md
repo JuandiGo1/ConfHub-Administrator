@@ -81,11 +81,14 @@ ConfHub Administrator es una aplicación diseñada para organizadores de eventos
 - Chart Kit para visualizaciones
 - React Native Paper para componentes UI
 
+## 🎥 Vídeos
+-**Presentación de nuestra app**: https://www.youtube.com/watch?v=4EopXYYO3Rw
 ## 👨‍💻 Autores
 
 - [@JuandiGo1](https://github.com/JuandiGo1) 🚀
 - [@G-dark](https://github.com/G-dark) 🌙
 - [@lunajulio](https://github.com/lunajulio) 🌟
 - [@GermanCentanaro](https://github.com/GermanCentanaro) 🔥
+- [@Shaddia](https://github.com/Shaddia) ❤️‍🩹​
 
 
