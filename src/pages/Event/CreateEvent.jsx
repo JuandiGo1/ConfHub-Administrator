@@ -253,22 +253,40 @@ export default function CreateEvent() {
       )}
 
       <Text style={{ marginBottom: 6, fontWeight: "bold" }}>Track</Text>
-      <View style={[styles.input, { padding: 0, marginBottom: 12 }]}>
-        <Picker
-          selectedValue={selectedTrack}
-          onValueChange={(itemValue) => setSelectedTrack(itemValue)}
-          style={{ height: 60, width: "100%" }}
-        >
-          <Picker.Item label="Ninguno" value="none" />
-          {tracks.map((track) => (
-            <Picker.Item
-              key={track.name}
-              label={track.name}
-              value={track.name}
-            />
-          ))}
-        </Picker>
-      </View>
+      {Platform.OS === "ios" ? (
+        <View style={{ marginBottom: 12 }}>
+          <Picker
+            selectedValue={selectedTrack}
+            onValueChange={(itemValue) => setSelectedTrack(itemValue)}
+          >
+            <Picker.Item label="Ninguno" value="none" />
+            {tracks.map((track) => (
+              <Picker.Item
+                key={track.name}
+                label={track.name}
+                value={track.name}
+              />
+            ))}
+          </Picker>
+        </View>
+      ) : (
+        <View style={[styles.input, { padding: 0, marginBottom: 12 }]}>
+          <Picker
+            selectedValue={selectedTrack}
+            onValueChange={(itemValue) => setSelectedTrack(itemValue)}
+            style={{ height: 60, width: "100%" }}
+          >
+            <Picker.Item label="Ninguno" value="none" />
+            {tracks.map((track) => (
+              <Picker.Item
+                key={track.name}
+                label={track.name}
+                value={track.name}
+              />
+            ))}
+          </Picker>
+        </View>
+      )}
 
       <Text style={{ marginBottom: 6, fontWeight: "bold" }}>
         Asistentes y cupos disponibles
